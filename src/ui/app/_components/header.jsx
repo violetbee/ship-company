@@ -7,9 +7,11 @@ import { store } from "../../../store";
 
 function Header() {
   const { pathname } = useLocation();
-
   const auth = useSelector((state) => state.user.status);
   const isAuth = auth === "authenticated";
+
+  const userRole = useSelector((state) => state.user.role);
+  const isSuperUser = userRole === "superUser";
 
   const handleLogout = async () => {
     const error = await logout();
@@ -62,16 +64,30 @@ function Header() {
           >
             İletişim
           </NavLink>
-          <NavLink
-            className={({ isActive }) =>
-              `hover:border-white flex h-full items-center justify-center border-b-4 border-transparent px-4 duration-200 ${
-                isActive ? "border-white" : ""
-              }`
-            }
-            to="/ilanolustur"
-          >
-            Ilan Olustur
-          </NavLink>
+          {isSuperUser && (
+            <NavLink
+              className={({ isActive }) =>
+                `hover:border-white flex h-full items-center justify-center border-b-4 border-transparent px-4 duration-200 ${
+                  isActive ? "border-white" : ""
+                }`
+              }
+              to="/ilanolustur"
+            >
+              Ilan Olustur
+            </NavLink>
+          )}
+          {isAuth && (
+            <NavLink
+              className={({ isActive }) =>
+                `hover:border-white flex h-full items-center justify-center border-b-4 border-transparent px-4 duration-200 ${
+                  isActive ? "border-white" : ""
+                }`
+              }
+              to="/profile"
+            >
+              Profil
+            </NavLink>
+          )}
         </nav>
         <div className="space-x-3">
           {isAuth ? (

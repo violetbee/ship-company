@@ -5,6 +5,7 @@ const initialState = {
   status: "notAuth",
   firstName: "",
   secondName: "",
+  role: "",
 };
 
 const userSlice = createSlice({
@@ -17,14 +18,16 @@ const userSlice = createSlice({
         state.status = action.payload.status;
         state.firstName = action.payload.firstName;
         state.secondName = action.payload.secondName;
+        state.role = action.payload.role;
       },
-      prepare(userId, status, firstName, secondName) {
+      prepare(userId, status, firstName, secondName, role) {
         return {
           payload: {
             userId,
             status,
             firstName,
             secondName,
+            role,
           },
         };
       },
@@ -32,6 +35,9 @@ const userSlice = createSlice({
     userLogout(state) {
       state.status = "notAuth";
       state.userId = "";
+      state.firstName = "";
+      state.secondName = "";
+      state.role = "";
     },
   },
 });

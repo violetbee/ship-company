@@ -21,7 +21,7 @@ function JobForm() {
     reset,
   } = useForm();
 
-  const id = useSelector(getUserId);
+  const userId = useSelector(getUserId);
 
   const { mutate: jobInserting, isLoading } = useMutation({
     mutationFn: insertJob,
@@ -33,7 +33,13 @@ function JobForm() {
   });
 
   function onSubmit(data) {
-    jobInserting(data);
+    // Map the form data to match the expected API request format
+    const jobData = {
+      ...data,
+      user_id: userId, // Rename userId to user_id for the database
+    };
+
+    jobInserting(jobData);
   }
 
   return (
@@ -71,21 +77,9 @@ function JobForm() {
       <input
         hidden
         type="text"
-        defaultValue={id}
-        placeholder="userId"
+        defaultValue={userId}
         {...register("user_id", {
-          required: "Gereken Personel gerekli",
-        })}
-        className="w-full"
-      />
-
-      <input
-        hidden
-        type="text"
-        placeholder="userId"
-        defaultValue={id}
-        {...register("userId", {
-          required: "Gereken Personel gerekli",
+          required: true,
         })}
         className="w-full"
       />

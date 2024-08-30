@@ -39,17 +39,16 @@ export async function getSession() {
       return;
     }
 
-    // Eğer sessionData mevcut değilse, fonksiyonu bitir
     if (!sessionData.session) {
       console.warn("No session data available.");
       return;
     }
 
     const { data: profilesData, error: profilesError } = await supabase
-      .from("profiles") // Burada doğru tablo adını kullanmalısınız
-      .select("first_name, second_name")
-      .eq("user_id", sessionData.session.user.id) // Kullanıcıya özgü profil verisini getirmek için
-      .single(); // Tek bir kayıt dönerse single() kullanabilirsiniz
+      .from("profiles") // Correct table name
+      .select("first_name, second_name, role") // Include the role field
+      .eq("user_id", sessionData.session.user.id) // Fetch profile data specific to the user
+      .single(); // Use single() to get a single record
 
     if (profilesError) {
       console.error("Profiles error:", profilesError.message);
@@ -61,12 +60,14 @@ export async function getSession() {
       return;
     }
 
+    // Dispatch user data to the Redux store
     store.dispatch(
       getUserToken(
         sessionData.session.user.id,
         sessionData.session.user.aud,
         profilesData.first_name,
-        profilesData.second_name
+        profilesData.second_name,
+        profilesData.role // Include the role in the dispatched action
       )
     );
 
@@ -74,4 +75,39 @@ export async function getSession() {
   } catch (error) {
     console.error("Error:", error.message);
   }
+}
+
+export async function getProfile(userId) {
+  const { data: profile, error } = await supabase
+    .from("profiles")
+    .select("id, first_name, second_name")
+    .eq("user_id", userId)
+    .single();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  console.log("profil alindi", profile);
+
+  return profile;
+}
+
+export async function getCV(userId) {
+  const profile = await getProfile(userId);
+  console.log("profile idddd", profile.id);
+
+  if (!profile?.id) return [];
+
+  const { data, error } = await supabase
+    .from("cvs")
+    .select("*")
+    .eq("profile_id", profile.id)
+    .single();
+
+  console.log("dataaa", data);
+
+  if (error) throw new Error(error.message);
+
+  return data;
 }

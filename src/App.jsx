@@ -11,6 +11,7 @@ import Signup from "./ui/Signup";
 
 import { useEffect } from "react";
 import { getSession } from "./services/getAPI";
+import ProfilePage from "./pages/ProfilePage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -42,7 +43,7 @@ function App() {
             <Route path="ilanlar/:id" element={<DetailPage />} />
             <Route path="login" element={<LoginForm />} />
             <Route path="signup" element={<Signup />} />
-
+            <Route path="profile" element={<ProfilePage />} />
             <Route path="*" element={<div>Page Not Found</div>} />
           </Route>
         </Routes>

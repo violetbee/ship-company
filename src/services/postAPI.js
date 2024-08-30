@@ -17,7 +17,7 @@ export async function insertJob(job) {
 
 export async function login({ email, password }) {
   try {
-    // Kullanıcıyı giriş yapma işlemi
+    // Authenticate user
     const { data: loginData, error: loginError } =
       await supabase.auth.signInWithPassword({
         email,
@@ -35,21 +35,22 @@ export async function login({ email, password }) {
       throw new Error("Kullanıcı bilgileri bulunamadı.");
     }
 
-    // Kullanıcının profilini çekme
+    // Fetch user's profile
     let { data: profilesData, error: profilesError } = await supabase
       .from("profiles")
-      .select("first_name, second_name")
+      .select("id, first_name, second_name, role")
       .eq("user_id", loginData.user.id)
       .single();
 
-    // Profil bulunamazsa yeni profil oluşturma
+    // Create a new profile if not found
     if (profilesError && profilesError.code === "PGRST116") {
       const { data: newProfile, error: newProfileError } = await supabase
         .from("profiles")
         .insert({
           user_id: loginData.user.id,
-          first_name: " ", // Varsayılan ad
-          second_name: " ", // Varsayılan soyad
+          first_name: " ", // Default first name
+          second_name: " ", // Default last name
+          role: "normalUser", // Default role
         })
         .select()
         .single();
@@ -65,21 +66,50 @@ export async function login({ email, password }) {
       throw new Error("Profil verisi alınamadı.");
     }
 
-    // Kullanıcı token'ı ve profil verileri ile aksiyonu tetikleme
+    // Dispatch user data to the store
     store.dispatch(
       getUserToken(
         loginData.user.id,
         loginData.user.aud,
         profilesData.first_name,
-        profilesData.second_name
+        profilesData.second_name,
+        profilesData.role // Ensure role is included here
       )
     );
 
     return loginData;
   } catch (error) {
     console.error("Hata:", error.message);
-    throw error; // Hatanın mutation hook tarafından işlenmesi için yeniden fırlat
+    throw error; // Re-throw error for mutation hook handling
   }
+}
+
+export async function updateProfile({ profileId, first_name, second_name }) {
+  const { data: updatedProfile, error } = await supabase
+    .from("profiles")
+    .update({ first_name, second_name })
+    .eq("id", profileId)
+    .single();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return updatedProfile;
+}
+
+export async function updateCV({ profileId, cvDetails }) {
+  const { data: updatedCV, error } = await supabase
+    .from("cvs")
+    .update({ details: cvDetails })
+    .eq("profile_id", profileId)
+    .single();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return updatedCV;
 }
 
 export async function logout() {
