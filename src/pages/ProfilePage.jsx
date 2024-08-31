@@ -5,6 +5,7 @@ import { getUserId } from "../services/userSlice";
 import { getCV, getProfile } from "../services/getAPI";
 import { Button } from "../ui/Button";
 import { updateCV, updateProfile } from "../services/postAPI";
+import Spinner from "../ui/Spinner";
 
 function ProfilePage() {
   const { register, handleSubmit } = useForm();
@@ -70,12 +71,7 @@ function ProfilePage() {
     }
   };
 
-  if (profileLoading || cvLoading)
-    return (
-      <div className="flex items-center justify-center min-h-screen text-lg">
-        Loading...
-      </div>
-    );
+  if (profileLoading || cvLoading) return <Spinner />;
   if (profileError || cvError)
     return (
       <div className="flex items-center justify-center min-h-screen text-lg text-red-500">

@@ -88,14 +88,11 @@ export async function getProfile(userId) {
     throw new Error(error.message);
   }
 
-  console.log("profil alindi", profile);
-
   return profile;
 }
 
 export async function getCV(userId) {
   const profile = await getProfile(userId);
-  console.log("profile idddd", profile.id);
 
   if (!profile?.id) return [];
 
@@ -105,9 +102,7 @@ export async function getCV(userId) {
     .eq("profile_id", profile.id)
     .single();
 
-  console.log("dataaa", data);
-
-  if (error) throw new Error(error.message);
+  if (error) return [];
 
   return data;
 }

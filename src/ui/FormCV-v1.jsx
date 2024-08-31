@@ -47,7 +47,6 @@ function CvForm() {
       setIndex(profileID);
 
       const { data: cvs } = await supabase.from("cvs").select("profile_id");
-      console.log(cvs.includes(index));
     }
     getId();
   }, [id]);

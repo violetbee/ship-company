@@ -2,28 +2,48 @@
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
+import { useSelector } from "react-redux";
 import { login } from "../services/postAPI";
+import { getCV } from "../services/getAPI";
+import { getUserId } from "../services/userSlice";
 
 function LoginForm() {
   const navigate = useNavigate();
+  const userId = useSelector(getUserId);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  const { mutate } = useMutation({
+  const loginMutation = useMutation({
     mutationFn: login,
-    onSuccess: () => navigate("/"),
+    onSuccess: () => {
+      getCvMutation.mutate(userId); // Login başarılı olduğunda CV'yi çek
+    },
     onError: (error) => console.error(error.message),
   });
 
+  const getCvMutation = useMutation({
+    mutationFn: getCV,
+    onSuccess: (cvData) => {
+      if (cvData && Object.keys(cvData).length > 0) {
+        // Eğer cvData varsa ve boş değilse
+        navigate("/"); // CV varsa ana sayfaya yönlendir
+      } else {
+        navigate("/cvekle"); // CV yoksa CV ekleme sayfasına yönlendir
+      }
+    },
+    onError: (error) => console.error("CV yüklenemedi:", error.message),
+  });
+
   const onSubmit = (data) => {
-    mutate(data);
+    loginMutation.mutate(data); // Login fonksiyonunu tetikle
   };
 
   return (
-    <div className=" flex items-center justify-center bg-gray-100 px-4 py-12">
+    <div className="flex items-center justify-center bg-gray-100 px-4 py-12">
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="w-full max-w-sm md:max-w-md lg:max-w-lg p-8 bg-white rounded-lg shadow-lg"

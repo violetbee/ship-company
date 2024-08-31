@@ -1,13 +1,15 @@
-import { Link } from "react-router-dom"; // Use react-router for client-side routing
+import React from "react";
+import { Link } from "react-router-dom";
 import { CarouselDemo } from "../ui/app/_components/carousel";
 import bg from "../assets/giresun.jpeg";
 import { useJobListing } from "../hooks/useJobListing";
+import Spinner from "../ui/Spinner";
 
 export default function Home() {
   const { isLoading, error, jobListingData } = useJobListing();
 
   if (isLoading) {
-    return <div>loading...</div>;
+    return <Spinner />;
   }
 
   return (
@@ -77,30 +79,3 @@ export default function Home() {
     </main>
   );
 }
-
-// const jobPostings = [
-//   {
-//     id: 0,
-//     date: "2024-07-19",
-//     required: "3000 kW Baş Makinist",
-//     shipType: "Kuru Yük",
-//     tonnage: "4500 dwt 2800 kW",
-//     flagType: "Yabancı",
-//   },
-//   {
-//     id: 1,
-//     date: "2024-07-18",
-//     required: "DPA(makina)3000 USD",
-//     shipType: "Dökme Yük",
-//     tonnage: "10.000",
-//     flagType: "TC",
-//   },
-//   {
-//     id: 2,
-//     date: "2024-07-18",
-//     required: "Asker 1.zabit 4000 USD",
-//     shipType: "Kuru Yük",
-//     tonnage: "2900 gros 4800 dwt",
-//     flagType: "Yabancı",
-//   },
-// ];

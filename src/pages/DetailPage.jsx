@@ -1,17 +1,16 @@
 import { useParams } from "react-router";
 import { useJobById } from "../hooks/useJobListing";
-import { useSelector } from "react-redux";
+
+import Spinner from "../ui/Spinner";
 
 function DetailPage() {
   const { id } = useParams();
   const { jobData, isLoading, error } = useJobById(id);
 
-  if (isLoading)
-    return (
-      <div className="flex items-center justify-center min-h-screen text-lg font-semibold text-gray-800">
-        Loading...
-      </div>
-    );
+  if (isLoading) {
+    return <Spinner />;
+  }
+
   if (error)
     return (
       <div className="flex items-center justify-center min-h-screen text-lg font-semibold text-red-500">

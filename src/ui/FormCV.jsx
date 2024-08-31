@@ -13,7 +13,6 @@ function CvForm() {
     register,
     handleSubmit,
     formState: { errors },
-    setValue,
   } = useForm();
   const userId = useSelector(getUserId);
   const navigate = useNavigate();
@@ -68,14 +67,13 @@ function CvForm() {
     }
 
     const existingCV = cvs?.some((cv) => cv.profile_id === profileId);
-    console.log("Existing CV Check:", existingCV);
 
     if (existingCV) {
       alert("You already have a CV. Please update your existing CV.");
       return;
     }
 
-    mutate(data);
+    mutate({ ...data, profile_id: profileId });
   };
 
   if (profilesLoading || cvsLoading) {
@@ -85,39 +83,47 @@ function CvForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="container flex flex-col space-y-8 p-8 bg-blue-500"
+      className="container mx-auto max-w-2xl p-8 bg-white shadow-lg rounded-lg"
     >
-      {/* Profile ID Field */}
-      <div className="flex items-center space-x-2">
+      <h2 className="text-2xl font-semibold mb-6 text-center text-gray-800">
+        Create Your CV
+      </h2>
+
+      <div className="space-y-4">
+        {/* Profile ID Field */}
         <input
           type="text"
           placeholder="Profile ID"
           hidden
           value={profileId || ""}
-          {...register("profile_id", { required: "Profile ID gerekli" })}
-          className="w-full"
+          {...register("profile_id", { required: "Profile ID is required" })}
         />
-        {errors.profile_id && (
-          <p className="mt-2 text-red-600">{errors.profile_id.message}</p>
-        )}
-      </div>
 
-      {/* Details Field */}
-      <div className="flex items-center space-x-2">
-        <Input
-          type="text"
-          placeholder="Details"
-          {...register("details", { required: "Details gerekli" })}
-          className="w-full"
-        />
-        {errors.details && (
-          <p className="mt-2 text-red-600">{errors.details.message}</p>
-        )}
-      </div>
+        {/* Details Field */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Details
+          </label>
+          <Input
+            type="text"
+            placeholder="Enter your CV details"
+            {...register("details", { required: "Details are required" })}
+            className="w-full border-gray-300 rounded-lg shadow-sm"
+          />
+          {errors.details && (
+            <p className="mt-2 text-sm text-red-600">
+              {errors.details.message}
+            </p>
+          )}
+        </div>
 
-      <Button type="submit" className="flex gap-2 mt-4" variant="outline">
-        Gönder
-      </Button>
+        <Button
+          type="submit"
+          className="w-full py-3 mt-6 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300"
+        >
+          Submit
+        </Button>
+      </div>
     </form>
   );
 }
