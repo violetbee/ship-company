@@ -51,24 +51,27 @@ export default function Home() {
             <p className="w-1/6">Bayrak Türü</p>
             <p className="w-1/6">Detay</p>
           </div>
-          {jobListingData.map((jobPosting) => (
-            <div
-              key={jobPosting.id}
-              className="flex w-full items-center justify-between border-t border-[#171923] bg-white p-4 text-[#171923]"
-            >
-              <p className="w-1/6">{jobPosting.date}</p>
-              <p className="w-1/6">{jobPosting.required_personnel}</p>
-              <p className="w-1/6">{jobPosting.ship_type}</p>
-              <p className="w-1/6">{jobPosting.tonnage}</p>
-              <p className="w-1/6">{jobPosting.flag_type}</p>
-              <Link
-                className="w-1/6 rounded-full bg-[#171923] px-4 py-2 text-center text-white"
-                to={`/ilanlar/${jobPosting.id}`}
+          {jobListingData
+            .slice(-3)
+            .reverse()
+            .map((jobPosting) => (
+              <div
+                key={jobPosting.id}
+                className="flex w-full items-center justify-between border-t border-[#171923] bg-white p-4 text-[#171923]"
               >
-                Detay
-              </Link>
-            </div>
-          ))}
+                <p className="w-1/6">{jobPosting.date}</p>
+                <p className="w-1/6">{jobPosting.required_personnel}</p>
+                <p className="w-1/6">{jobPosting.ship_type}</p>
+                <p className="w-1/6">{jobPosting.tonnage}</p>
+                <p className="w-1/6">{jobPosting.flag_type}</p>
+                <Link
+                  className="w-1/6 rounded-full bg-[#171923] px-4 py-2 text-center text-white"
+                  to={`/ilanlar/${jobPosting.id}`}
+                >
+                  Detay
+                </Link>
+              </div>
+            ))}
         </div>
       </div>
     </main>

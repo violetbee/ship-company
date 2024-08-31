@@ -50,14 +50,8 @@ function ProfilePage() {
   });
 
   const onSubmit = (data) => {
-    console.log("Form data:", data);
-
     if (profile?.id) {
       if (data.name || data.surname) {
-        console.log("Updating profile with:", {
-          profileId: profile.id,
-          ...data,
-        });
         updateProfileMutation.mutate({
           profileId: profile.id,
           first_name: data.name,
@@ -66,10 +60,6 @@ function ProfilePage() {
       }
 
       if (data.cvDetails) {
-        console.log("Updating CV with:", {
-          profileId: profile.id,
-          cvDetails: data.cvDetails,
-        });
         updateCVMutation.mutate({
           profileId: profile.id,
           cvDetails: data.cvDetails,
@@ -80,46 +70,64 @@ function ProfilePage() {
     }
   };
 
-  if (profileLoading || cvLoading) return <div>Loading...</div>;
+  if (profileLoading || cvLoading)
+    return (
+      <div className="flex items-center justify-center min-h-screen text-lg">
+        Loading...
+      </div>
+    );
   if (profileError || cvError)
-    return <div>Error: {profileError?.message || cvError?.message}</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen text-lg text-red-500">
+        Error: {profileError?.message || cvError?.message}
+      </div>
+    );
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Profil Sayfası</h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium mb-1">Ad:</label>
-          <input
-            type="text"
-            {...register("name")}
-            defaultValue={profile?.first_name || ""}
-            className="p-2 border border-gray-300 rounded"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Soyad:</label>
-          <input
-            type="text"
-            {...register("surname")}
-            defaultValue={profile?.second_name || ""}
-            className="p-2 border border-gray-300 rounded"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">
-            CV Detayları:
-          </label>
-          <textarea
-            {...register("cvDetails")}
-            defaultValue={cvData?.details || ""}
-            className="p-2 border border-gray-300 rounded"
-          />
-        </div>
-        <Button type="submit" variant="primary">
-          Kaydet
-        </Button>
-      </form>
+    <div className=" flex flex-col bg-gradient-to-r from-blue-600 to-purple-600 px-4 pt-5">
+      <main className="flex-grow p-8">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-6 max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg"
+        >
+          <div>
+            <label className="block text-lg font-semibold text-gray-700 mb-2">
+              Ad:
+            </label>
+            <input
+              type="text"
+              {...register("name")}
+              defaultValue={profile?.first_name || ""}
+              className="w-full p-3 border border-gray-300 rounded-md"
+            />
+          </div>
+          <div>
+            <label className="block text-lg font-semibold text-gray-700 mb-2">
+              Soyad:
+            </label>
+            <input
+              type="text"
+              {...register("surname")}
+              defaultValue={profile?.second_name || ""}
+              className="w-full p-3 border border-gray-300 rounded-md"
+            />
+          </div>
+          <div>
+            <label className="block text-lg font-semibold text-gray-700 mb-2">
+              CV Detayları:
+            </label>
+            <textarea
+              {...register("cvDetails")}
+              defaultValue={cvData?.details || ""}
+              className="w-full p-3 border border-gray-300 rounded-md"
+              rows="6"
+            />
+          </div>
+          <Button type="submit" variant="primary" className="w-full">
+            Kaydet
+          </Button>
+        </form>
+      </main>
     </div>
   );
 }

@@ -23,59 +23,67 @@ function LoginForm() {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="max-w-md mx-auto p-6 border border-gray-300 rounded-lg shadow-lg bg-white"
-    >
-      <div className="mb-4">
-        <label htmlFor="email" className="block text-gray-700 font-bold mb-2">
-          E-posta:
-        </label>
-        <input
-          id="email"
-          type="email"
-          {...register("email", {
-            required: "E-posta gerekli",
-            pattern: {
-              value: /^[^@]+@[^@]+\.[a-zA-Z]{2,}$/,
-              message: "Geçerli bir e-posta adresi girin",
-            },
-          })}
-          className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500"
-        />
-        {errors.email && (
-          <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
-        )}
-      </div>
-
-      <div className="mb-6">
-        <label
-          htmlFor="password"
-          className="block text-gray-700 font-bold mb-2"
-        >
-          Şifre:
-        </label>
-        <input
-          id="password"
-          type="password"
-          {...register("password", {
-            required: "Şifre gerekli",
-            minLength: { value: 6, message: "Şifre en az 6 karakter olmalı" },
-          })}
-          className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500"
-        />
-        {errors.password && (
-          <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
-        )}
-      </div>
-
-      <button
-        type="submit"
-        className="w-full py-3 bg-blue-500 text-white font-bold rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-700"
+    <div className=" flex items-center justify-center bg-gray-100 px-4 py-12">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="w-full max-w-sm md:max-w-md lg:max-w-lg p-8 bg-white rounded-lg shadow-lg"
       >
-        Giriş Yap
-      </button>
-    </form>
+        <h2 className="text-2xl font-bold text-center mb-6 text-gray-700">
+          Giriş Yap
+        </h2>
+
+        <div className="mb-4">
+          <label htmlFor="email" className="block text-gray-700 font-bold mb-2">
+            E-posta:
+          </label>
+          <input
+            id="email"
+            type="email"
+            {...register("email", {
+              required: "E-posta gerekli",
+              pattern: {
+                value: /^[^@]+@[^@]+\.[a-zA-Z]{2,}$/,
+                message: "Geçerli bir e-posta adresi girin",
+              },
+            })}
+            className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500"
+          />
+          {errors.email && (
+            <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+          )}
+        </div>
+
+        <div className="mb-6">
+          <label
+            htmlFor="password"
+            className="block text-gray-700 font-bold mb-2"
+          >
+            Şifre:
+          </label>
+          <input
+            id="password"
+            type="password"
+            {...register("password", {
+              required: "Şifre gerekli",
+              minLength: { value: 6, message: "Şifre en az 6 karakter olmalı" },
+            })}
+            className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500"
+          />
+          {errors.password && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.password.message}
+            </p>
+          )}
+        </div>
+
+        <button
+          type="submit"
+          className="w-full py-3 bg-blue-500 text-white font-bold rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-700"
+        >
+          Giriş Yap
+        </button>
+      </form>
+    </div>
   );
 }
 

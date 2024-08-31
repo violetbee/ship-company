@@ -111,7 +111,10 @@ function Header() {
         </div>
       </div>
       <div className="h-[2px] w-full bg-[#1d202c]" />
-      {pathname !== "/ilanolustur" && <SubHeader />}
+      {pathname !== "/ilanolustur" &&
+        pathname !== "/profile" &&
+        pathname !== "/signup" &&
+        pathname !== "/login" && <SubHeader />}
     </header>
   );
 }
