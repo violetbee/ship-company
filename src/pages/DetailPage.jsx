@@ -2,10 +2,31 @@ import { useParams } from "react-router";
 import { useJobById } from "../hooks/useJobListing";
 
 import Spinner from "../ui/Spinner";
+import { useSelector } from "react-redux";
+import { getUserId } from "../services/userSlice";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { getProfile } from "../services/getAPI";
+import { postApplication } from "../services/postAPI";
 
 function DetailPage() {
   const { id } = useParams();
+  const userId = useSelector(getUserId);
+  const isAuth = useSelector((state) => state.user.status === "authenticated");
   const { jobData, isLoading, error } = useJobById(id);
+
+  const { data } = useQuery({
+    queryKey: ["profile"],
+    queryFn: () => getProfile(userId),
+    enabled: !!userId,
+  });
+
+  const { mutate: postApp } = useMutation({
+    mutationFn: () => postApplication(data.id, id),
+  });
+
+  function handlePost() {
+    postApp();
+  }
 
   if (isLoading) {
     return <Spinner />;
@@ -66,6 +87,14 @@ function DetailPage() {
           <h2 className="text-lg font-semibold text-gray-800 mb-4">Details</h2>
           <p className="text-xl text-gray-800">{jobData.details}</p>
         </div>
+        {isAuth && (
+          <button
+            onClick={handlePost}
+            className="mt-6 px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150"
+          >
+            Apply Now
+          </button>
+        )}
       </div>
     </div>
   );

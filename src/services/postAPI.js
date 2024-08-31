@@ -156,3 +156,12 @@ export async function createCV(cv) {
 
   return data;
 }
+
+export async function postApplication(userId, jobId) {
+  const { data, error } = await supabase
+    .from("applications")
+    .insert([{ profile_id: userId, job_listing_id: jobId }])
+    .select();
+
+  return data;
+}
