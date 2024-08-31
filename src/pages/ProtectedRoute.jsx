@@ -10,8 +10,12 @@ function ProtectedRoute({ children }) {
   );
   const userId = useSelector(getUserId);
 
-  // Fetch profiles and find the profile ID
-  const { data: profiles, error: profilesError } = useQuery({
+  // Fetch profiles
+  const {
+    data: profiles,
+    error: profilesError,
+    isLoading: profilesLoading,
+  } = useQuery({
     queryKey: ["profiles"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -20,13 +24,18 @@ function ProtectedRoute({ children }) {
       if (error) throw new Error(error.message);
       return data;
     },
-    enabled: isAuthenticated, // only fetch if authenticated
+    enabled: isAuthenticated, // Only fetch if authenticated
   });
 
+  // Determine the profile ID based on the fetched profiles
   const profileId = profiles?.find((profile) => profile.user_id === userId)?.id;
 
-  // Fetch CVs based on the profile ID
-  const { data: cvs, error: cvsError } = useQuery({
+  // Fetch CVs based on the profile ID, only if profiles are successfully fetched
+  const {
+    data: cvs,
+    error: cvsError,
+    isLoading: cvsLoading,
+  } = useQuery({
     queryKey: ["cvs", profileId],
     queryFn: async () => {
       if (!profileId) return [];
@@ -37,11 +46,15 @@ function ProtectedRoute({ children }) {
       if (error) throw new Error(error.message);
       return data;
     },
-    enabled: !!profileId && isAuthenticated,
+    enabled: !!profileId && isAuthenticated, // Fetch only if profileId is available and authenticated
   });
 
   if (!isAuthenticated) {
     return <Navigate to="/login" />;
+  }
+
+  if (profilesLoading || cvsLoading) {
+    return <div>Loading...</div>; // Show loading state while fetching
   }
 
   if (profilesError || cvsError) {

@@ -3,7 +3,7 @@ import { Input } from "../ui/input";
 import { Button } from "./Button";
 import { useSelector } from "react-redux";
 import { getUserId } from "../services/userSlice";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createCV } from "../services/postAPI";
 import { useNavigate } from "react-router";
 import { supabase } from "../supabase/supabase";
@@ -16,6 +16,7 @@ function CvForm() {
   } = useForm();
   const userId = useSelector(getUserId);
   const navigate = useNavigate();
+  const queryClient = useQueryClient(); // Get the query client
 
   // Fetch profiles and find the profile ID
   const {
@@ -57,7 +58,10 @@ function CvForm() {
   // Handle form submission
   const { mutate } = useMutation({
     mutationFn: createCV,
-    onSuccess: () => navigate("/"),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["cvs", profileId]); // Invalidate the query for cvs
+      navigate("/"); // Navigate to the desired page
+    },
   });
 
   const onSubmit = async (data) => {
