@@ -35,12 +35,10 @@ export async function getSession() {
       await supabase.auth.getSession();
 
     if (sessionError) {
-      console.error("Session error:", sessionError.message);
       return;
     }
 
     if (!sessionData.session) {
-      console.warn("No session data available.");
       return;
     }
 

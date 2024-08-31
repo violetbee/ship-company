@@ -34,7 +34,6 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ReactQueryDevtools initialIsOpen={false} />
-
       <BrowserRouter>
         <Routes>
           <Route element={<RootLayout />}>
@@ -50,24 +49,31 @@ function App() {
               }
             />
             <Route path="*" element={<div>Page Not Found</div>} />
+            <Route
+              path="login"
+              element={
+                <PrivateRoute>
+                  <LoginForm />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="signup"
+              element={
+                <PrivateRoute>
+                  <Signup />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="cvekle"
+              element={
+                <ProtectedRoute>
+                  <CvForm />
+                </ProtectedRoute>
+              }
+            />
           </Route>
-          <Route
-            path="login"
-            element={
-              <PrivateRoute>
-                <LoginForm />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="signup"
-            element={
-              <PrivateRoute>
-                <Signup />
-              </PrivateRoute>
-            }
-          />
-          <Route path="cvekle" element={<CvForm />} />
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>
