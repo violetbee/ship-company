@@ -65,15 +65,15 @@ function App() {
                 </PrivateRoute>
               }
             />
-            <Route
-              path="cvekle"
-              element={
-                <ProtectedRoute>
-                  <CvForm />
-                </ProtectedRoute>
-              }
-            />
           </Route>
+          <Route
+            path="cvekle"
+            element={
+              <ProtectedRoute>
+                <CvForm />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>

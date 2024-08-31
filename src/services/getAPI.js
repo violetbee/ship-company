@@ -104,3 +104,18 @@ export async function getCV(userId) {
 
   return data;
 }
+
+export async function checkApplicationExists(userId, jobId) {
+  const { data, error } = await supabase
+    .from("applications")
+    .select("id")
+    .eq("profile_id", userId)
+    .eq("job_listing_id", jobId);
+
+  if (error) {
+    console.error("Error checking application:", error);
+    throw error;
+  }
+
+  return data.length > 0; // Eğer başvuru varsa true döner
+}
