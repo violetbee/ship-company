@@ -3,10 +3,9 @@ import { Input } from "../ui/input";
 import { Button } from "./Button";
 import { useSelector } from "react-redux";
 import { getUserId } from "../services/userSlice";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createCV } from "../services/postAPI";
 import { useNavigate } from "react-router";
-import { supabase } from "../supabase/supabase";
 
 function CvForm() {
   const {
@@ -16,73 +15,33 @@ function CvForm() {
   } = useForm();
   const userId = useSelector(getUserId);
   const navigate = useNavigate();
-  const queryClient = useQueryClient(); // Get the query client
 
   // Fetch profiles and find the profile ID
-  const {
-    data: profiles,
-    error: profilesError,
-    isLoading: profilesLoading,
-  } = useQuery({
-    queryKey: ["profiles"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("id, user_id");
-      if (error) throw new Error(error.message);
-      return data;
-    },
-  });
+  const queryClient = useQueryClient();
 
-  const profileId = profiles?.find((profile) => profile.user_id === userId)?.id;
+  const cachedProfile = queryClient.getQueryData(["profiles", userId]);
 
-  // Fetch CVs based on the profile ID
-  const {
-    data: cvs,
-    error: cvsError,
-    isLoading: cvsLoading,
-  } = useQuery({
-    queryKey: ["cvs", profileId],
-    queryFn: async () => {
-      if (!profileId) return [];
-      const { data, error } = await supabase
-        .from("cvs")
-        .select("*")
-        .eq("profile_id", profileId);
-      if (error) throw new Error(error.message);
-      return data;
-    },
-    enabled: !!profileId,
-  });
+  const cachedCV = queryClient.getQueryData(["cv", cachedProfile?.id]);
 
   // Handle form submission
   const { mutate } = useMutation({
     mutationFn: createCV,
     onSuccess: () => {
-      queryClient.invalidateQueries(["cvs", profileId]); // Invalidate the query for cvs
+      queryClient.invalidateQueries(["cvs", cachedProfile?.id]); // Invalidate the query for cvs
       navigate("/"); // Navigate to the desired page
     },
   });
 
+  console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", cachedCV);
+
   const onSubmit = async (data) => {
-    if (profilesError || cvsError) {
-      alert("Error fetching data. Please try again later.");
-      return;
-    }
-
-    const existingCV = cvs?.some((cv) => cv.profile_id === profileId);
-
-    if (existingCV) {
+    if (!cachedCV) {
       alert("You already have a CV. Please update your existing CV.");
       return;
     }
 
-    mutate({ ...data, profile_id: profileId });
+    mutate({ ...data, profile_id: cachedProfile?.id });
   };
-
-  if (profilesLoading || cvsLoading) {
-    return <p>Loading...</p>;
-  }
 
   return (
     <form
@@ -99,7 +58,7 @@ function CvForm() {
           type="text"
           placeholder="Profile ID"
           hidden
-          value={profileId || ""}
+          value={cachedProfile?.id || ""}
           {...register("profile_id", { required: "Profile ID is required" })}
         />
 

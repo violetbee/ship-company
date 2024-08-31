@@ -1,34 +1,20 @@
 import { useForm } from "react-hook-form";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
 import { getUserId } from "../services/userSlice";
-import { getCV, getProfile } from "../services/getAPI";
+
 import { Button } from "../ui/Button";
 import { updateCV, updateProfile } from "../services/postAPI";
-import Spinner from "../ui/Spinner";
 
 function ProfilePage() {
   const { register, handleSubmit } = useForm();
   const userId = useSelector(getUserId);
+
   const queryClient = useQueryClient();
 
-  const {
-    data: profile,
-    error: profileError,
-    isLoading: profileLoading,
-  } = useQuery({
-    queryKey: ["profile", userId],
-    queryFn: () => getProfile(userId),
-  });
+  const cachedProfile = queryClient.getQueryData(["profiles", userId]);
 
-  const {
-    data: cvData,
-    error: cvError,
-    isLoading: cvLoading,
-  } = useQuery({
-    queryKey: ["cv", userId],
-    queryFn: () => getCV(userId),
-  });
+  const cachedCV = queryClient.getQueryData(["cv", cachedProfile?.id]);
 
   const updateProfileMutation = useMutation({
     mutationFn: updateProfile,
@@ -43,7 +29,7 @@ function ProfilePage() {
   const updateCVMutation = useMutation({
     mutationFn: updateCV,
     onSuccess: () => {
-      queryClient.invalidateQueries(["cv", userId]);
+      queryClient.invalidateQueries(["cv", cachedProfile?.id]);
     },
     onError: (error) => {
       console.error("CV update error:", error);
@@ -51,10 +37,10 @@ function ProfilePage() {
   });
 
   const onSubmit = (data) => {
-    if (profile?.id) {
+    if (cachedProfile?.id) {
       if (data.name || data.surname) {
         updateProfileMutation.mutate({
-          profileId: profile.id,
+          profileId: cachedProfile.id,
           first_name: data.name,
           second_name: data.surname,
         });
@@ -62,7 +48,7 @@ function ProfilePage() {
 
       if (data.cvDetails) {
         updateCVMutation.mutate({
-          profileId: profile.id,
+          profileId: cachedProfile.id,
           cvDetails: data.cvDetails,
         });
       }
@@ -70,14 +56,6 @@ function ProfilePage() {
       console.error("Profile ID is not available");
     }
   };
-
-  if (profileLoading || cvLoading) return <Spinner />;
-  if (profileError || cvError)
-    return (
-      <div className="flex items-center justify-center min-h-screen text-lg text-red-500">
-        Error: {profileError?.message || cvError?.message}
-      </div>
-    );
 
   return (
     <div className=" flex flex-col bg-gradient-to-r from-blue-600 to-purple-600 px-4 pt-5">
@@ -93,7 +71,7 @@ function ProfilePage() {
             <input
               type="text"
               {...register("name")}
-              defaultValue={profile?.first_name || ""}
+              defaultValue={cachedProfile?.first_name || ""}
               className="w-full p-3 border border-gray-300 rounded-md"
             />
           </div>
@@ -104,7 +82,7 @@ function ProfilePage() {
             <input
               type="text"
               {...register("surname")}
-              defaultValue={profile?.second_name || ""}
+              defaultValue={cachedProfile?.second_name || ""}
               className="w-full p-3 border border-gray-300 rounded-md"
             />
           </div>
@@ -114,7 +92,7 @@ function ProfilePage() {
             </label>
             <textarea
               {...register("cvDetails")}
-              defaultValue={cvData?.details || ""}
+              defaultValue={cachedProfile?.details || ""}
               className="w-full p-3 border border-gray-300 rounded-md"
               rows="6"
             />

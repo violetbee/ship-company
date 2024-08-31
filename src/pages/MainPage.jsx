@@ -4,9 +4,32 @@ import { CarouselDemo } from "../ui/app/_components/carousel";
 import bg from "../assets/giresun.jpeg";
 import { useJobListing } from "../hooks/useJobListing";
 import Spinner from "../ui/Spinner";
+import { useQuery } from "@tanstack/react-query";
+import { useSelector } from "react-redux";
+import { getUserId } from "../services/userSlice";
+import { getCV, getProfile } from "../services/getAPI";
 
 export default function Home() {
   const { isLoading, error, jobListingData } = useJobListing();
+
+  const userId = useSelector(getUserId);
+  const isAuthenticated = useSelector(
+    (state) => state.user.status === "authenticated"
+  );
+
+  const { data: profile } = useQuery({
+    queryKey: ["profiles", userId],
+    queryFn: () => getProfile(userId),
+    enabled: !!userId && isAuthenticated,
+  });
+
+  console.log(profile);
+
+  const { data: cv } = useQuery({
+    queryKey: ["cv", profile?.id],
+    queryFn: () => getCV(userId),
+    enabled: !!userId && isAuthenticated,
+  });
 
   if (isLoading) {
     return <Spinner />;
