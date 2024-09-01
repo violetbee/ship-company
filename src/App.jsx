@@ -13,6 +13,7 @@ import { getSession } from "./services/getAPI";
 import ProfilePage from "./pages/ProfilePage";
 import ProtectedRoute from "./pages/ProtectedRoute";
 import PrivateRoute from "./pages/PrivateRoute";
+import JobPage from "./pages/JobPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -65,6 +66,7 @@ function App() {
                 </PrivateRoute>
               }
             />
+            <Route path="hizmetler" element={<JobPage />} />
           </Route>
           <Route
             path="cvekle"
