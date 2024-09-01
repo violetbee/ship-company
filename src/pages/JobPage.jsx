@@ -1,10 +1,14 @@
-import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
+import { useJobListing } from "../hooks/useJobListing";
+import Spinner from "../ui/Spinner";
 
 const JobPage = () => {
-  const queryClient = useQueryClient();
+  const { isLoading, error, jobListingData } = useJobListing();
 
-  const cachedJob = queryClient.getQueryData(["job_listings"]);
+  if (isLoading) {
+    return <Spinner />;
+  }
+
   return (
     <div className=" w-full">
       <div className="flex w-full items-center justify-between bg-[#171923] p-4 text-white">
@@ -15,7 +19,7 @@ const JobPage = () => {
         <p className="w-1/6">Bayrak Türü</p>
         <p className="w-1/6">Detay</p>
       </div>
-      {cachedJob
+      {jobListingData
         ?.slice()
         .reverse()
         .map((jobPosting) => (
