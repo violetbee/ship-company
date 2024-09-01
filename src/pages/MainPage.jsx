@@ -23,8 +23,6 @@ export default function Home() {
     enabled: !!userId && isAuthenticated,
   });
 
-  console.log(profile);
-
   const { data: cv } = useQuery({
     queryKey: ["cv", profile?.id],
     queryFn: () => getCV(userId),
