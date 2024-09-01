@@ -15,48 +15,10 @@ const Signup = () => {
   };
 
   return (
-    <div className="flex items-center justify-center py-12  bg-gray-100">
+    <div className="flex items-center justify-center py-12 bg-gray-100">
       <div className="w-full max-w-md p-8 bg-white shadow-md rounded-lg">
         <h2 className="text-2xl font-bold mb-6 text-center">Kayıt Formu</h2>
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
-          <div className="mb-4">
-            <label htmlFor="firstName" className="block text-gray-700">
-              İsim
-            </label>
-            <input
-              id="firstName"
-              type="text"
-              {...register("firstName", { required: "İsim gerekli" })}
-              className={`mt-1 p-2 w-full border rounded-md ${
-                errors.firstName ? "border-red-500" : "border-gray-300"
-              }`}
-            />
-            {errors.firstName && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.firstName.message}
-              </p>
-            )}
-          </div>
-
-          <div className="mb-4">
-            <label htmlFor="lastName" className="block text-gray-700">
-              Soyisim
-            </label>
-            <input
-              id="lastName"
-              type="text"
-              {...register("lastName", { required: "Soyisim gerekli" })}
-              className={`mt-1 p-2 w-full border rounded-md ${
-                errors.lastName ? "border-red-500" : "border-gray-300"
-              }`}
-            />
-            {errors.lastName && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.lastName.message}
-              </p>
-            )}
-          </div>
-
           <div className="mb-4">
             <label htmlFor="email" className="block text-gray-700">
               E-posta

@@ -129,8 +129,6 @@ export async function registerUser(email, password) {
     throw new Error(error.message);
   }
 
-  // Supabase kullanıcı objesi `user` altında olabilir, doğru yapıyı kontrol edin
-  console.log("Kullanıcı:", user); // Debug için
   return user;
 }
 

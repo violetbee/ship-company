@@ -92,7 +92,7 @@ function ProfilePage() {
             </label>
             <textarea
               {...register("cvDetails")}
-              defaultValue={cachedProfile?.details || ""}
+              defaultValue={cachedCV?.details || ""}
               className="w-full p-3 border border-gray-300 rounded-md"
               rows="6"
             />

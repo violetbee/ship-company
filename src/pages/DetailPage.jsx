@@ -4,7 +4,7 @@ import Spinner from "../ui/Spinner";
 import { useSelector } from "react-redux";
 import { getUserId } from "../services/userSlice";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getProfile, checkApplicationExists, getCV } from "../services/getAPI";
+import { checkApplicationExists } from "../services/getAPI";
 import { postApplication } from "../services/postAPI";
 
 function DetailPage() {
@@ -16,31 +16,20 @@ function DetailPage() {
 
   const queryClient = useQueryClient();
 
-  const { data: profileData } = useQuery({
-    queryKey: ["profile"],
-    queryFn: () => getProfile(userId),
-    enabled: !!userId,
-  });
+  const cachedProfile = queryClient.getQueryData(["profiles", userId]);
 
-  console.log(profileData);
-
-  // Kullanıcının CV'sinin olup olmadığını kontrol etme
-  const { data: hasCV, isLoading: isCheckingCV } = useQuery({
-    queryKey: ["checkCV", profileData?.id],
-    queryFn: () => getCV(profileData?.id),
-    enabled: !!userId,
-  });
+  const cachedCV = queryClient.getQueryData(["cv", cachedProfile?.id]);
 
   // Kullanıcının başvurusu olup olmadığını kontrol etme
   const { data: applicationExists, isLoading: isCheckingApplication } =
     useQuery({
-      queryKey: ["applicationExists", profileData?.id, id],
-      queryFn: () => checkApplicationExists(profileData?.id, id),
-      enabled: !!profileData?.id && !!id,
+      queryKey: ["applicationExists", cachedProfile?.id, id],
+      queryFn: () => checkApplicationExists(cachedProfile?.id, id),
+      enabled: !!cachedProfile?.id && !!id,
     });
 
   const { mutate: postApp } = useMutation({
-    mutationFn: () => postApplication(profileData.id, id),
+    mutationFn: () => postApplication(cachedProfile.id, id),
     onSuccess: () => {
       alert("Başvuru başarıyla yapıldı!");
       queryClient.invalidateQueries(["applicationExists"]);
@@ -51,12 +40,7 @@ function DetailPage() {
   });
 
   function handlePost() {
-    if (isCheckingCV || isCheckingApplication) {
-      alert("Kişisel bilgiler kontrol ediliyor, lütfen bekleyin.");
-      return;
-    }
-
-    if (!hasCV) {
+    if (!cachedCV) {
       alert("CV'niz bulunmuyor. Başvuru yapabilmek için CV'nizi yükleyin.");
       navigate("/cvekle");
       return;
@@ -98,11 +82,9 @@ function DetailPage() {
           <button
             onClick={handlePost}
             className="mt-6 px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150"
-            disabled={isCheckingCV || isCheckingApplication} // Kontrol yapılırken butonu devre dışı bırak
+            disabled={isCheckingApplication} // Kontrol yapılırken butonu devre dışı bırak
           >
-            {isCheckingCV || isCheckingApplication
-              ? "Checking..."
-              : "Apply Now"}
+            {isCheckingApplication ? "Checking..." : "Apply Now"}
           </button>
         )}
       </div>
