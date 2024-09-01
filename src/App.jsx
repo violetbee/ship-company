@@ -3,90 +3,81 @@ import RootLayout from "./ui/app/appLayout";
 import Home from "./pages/MainPage";
 import JobForm from "./ui/Form";
 import CvForm from "./ui/FormCV";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { useQuery } from "@tanstack/react-query";
+
 import DetailPage from "./pages/DetailPage";
 import LoginForm from "./ui/LoginForm";
 import Signup from "./ui/Signup";
-import { useEffect } from "react";
-import { getSession } from "./services/getAPI";
+
 import ProfilePage from "./pages/ProfilePage";
 import ProtectedRoute from "./pages/ProtectedRoute";
 import PrivateRoute from "./pages/PrivateRoute";
 import JobPage from "./pages/JobPage";
 import { ProtectIlanEkle } from "./pages/ProtectedRouter";
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 0,
-    },
-  },
-});
+import Spinner from "./ui/Spinner";
+import { getSession } from "./services/getAPI";
 
 function App() {
-  useEffect(function () {
-    async function getSesion() {
-      await getSession();
-    }
+  const { isLoading: loading } = useQuery({
+    queryKey: ["session"],
+    queryFn: getSession,
+  });
 
-    getSesion();
-  }, []);
+  if (loading) {
+    return <Spinner />;
+  }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ReactQueryDevtools initialIsOpen={false} />
-      <BrowserRouter>
-        <Routes>
-          <Route element={<RootLayout />}>
-            <Route index element={<Home />} />
-            <Route
-              path="ilanolustur"
-              element={
-                <ProtectIlanEkle>
-                  <JobForm />
-                </ProtectIlanEkle>
-              }
-            />
-            <Route path="ilanlar/:id" element={<DetailPage />} />
-            <Route
-              path="profile"
-              element={
-                <ProtectedRoute>
-                  <ProfilePage />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="*" element={<div>Page Not Found</div>} />
-            <Route
-              path="login"
-              element={
-                <PrivateRoute>
-                  <LoginForm />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="signup"
-              element={
-                <PrivateRoute>
-                  <Signup />
-                </PrivateRoute>
-              }
-            />
-            <Route path="hizmetler" element={<JobPage />} />
-          </Route>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<RootLayout />}>
+          <Route index element={<Home />} />
           <Route
-            path="cvekle"
+            path="ilanolustur"
+            element={
+              <ProtectIlanEkle>
+                <JobForm />
+              </ProtectIlanEkle>
+            }
+          />
+          <Route path="ilanlar/:id" element={<DetailPage />} />
+          <Route
+            path="profile"
             element={
               <ProtectedRoute>
-                <CvForm />
+                <ProfilePage />
               </ProtectedRoute>
             }
           />
-        </Routes>
-      </BrowserRouter>
-    </QueryClientProvider>
+          <Route path="*" element={<div>Page Not Found</div>} />
+          <Route
+            path="login"
+            element={
+              <PrivateRoute>
+                <LoginForm />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="signup"
+            element={
+              <PrivateRoute>
+                <Signup />
+              </PrivateRoute>
+            }
+          />
+          <Route path="hizmetler" element={<JobPage />} />
+        </Route>
+        <Route
+          path="cvekle"
+          element={
+            <ProtectedRoute>
+              <CvForm />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

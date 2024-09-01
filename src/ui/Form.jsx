@@ -1,24 +1,70 @@
 import { Input } from "../ui/input";
-import { useForm } from "react-hook-form";
 import { Button } from "./Button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { insertJob } from "../services/postAPI";
 import { useSelector } from "react-redux";
 import { getUserId } from "../services/userSlice";
 import { useNavigate } from "react-router";
+import { useEffect, useRef } from "react";
+import Quill from "quill";
+import "quill/dist/quill.snow.css";
+import { useForm } from "react-hook-form";
 
 function JobForm() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const userId = useSelector(getUserId);
+  const quillRef = useRef(null);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
+    setValue,
   } = useForm();
 
-  const userId = useSelector(getUserId);
+  useEffect(() => {
+    if (quillRef.current) {
+      const toolbarOptions = [
+        [{ header: "1" }, { header: "2" }, { font: [] }],
+        [{ size: [] }],
+        ["bold", "italic", "underline", "strike", "blockquote"],
+        [
+          { list: "ordered" },
+          { list: "bullet" },
+          { indent: "-1" },
+          { indent: "+1" },
+        ],
+        ["link", "image", "video"],
+        ["clean"],
+      ];
+
+      const quill = new Quill(quillRef.current, {
+        theme: "snow",
+        modules: {
+          toolbar: toolbarOptions,
+        },
+      });
+
+      // Set default template in Quill editor
+      quill.root.innerHTML = `
+        <h2 class="text-2xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2 mb-4">Tecrübe:</h2>
+        <p class="text-base text-gray-600 leading-relaxed">
+          Tecrübe detaylarınızı buraya ekleyin. Burada, tecrübe ile ilgili gerekli tüm bilgileri açık ve net bir şekilde belirtin.
+        </p>
+        
+        <h2 class="text-2xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2 mb-4">Genel İş Tanımı:</h2>
+        <p class="text-base text-gray-600 leading-relaxed">
+          İş tanımını buraya yazın. İşin gereksinimlerini ve işyerindeki genel sorumlulukları açıkça ifade edin.
+        </p>
+`;
+
+      quill.on("text-change", () => {
+        setValue("details", quill.root.innerHTML);
+      });
+    }
+  }, [setValue]);
 
   const { mutate: jobInserting, isLoading } = useMutation({
     mutationFn: insertJob,
@@ -183,11 +229,15 @@ function JobForm() {
             >
               İlan Detayları
             </label>
+            <div
+              ref={quillRef}
+              className="w-full p-3 border border-gray-300 rounded-md"
+              style={{ minHeight: "200px" }}
+            />
             <textarea
               id="details"
-              rows="4"
               {...register("details", { required: "İlan Detayları gerekli" })}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-black"
+              className="hidden"
             />
             {errors.details && (
               <p className="mt-2 text-red-600">{errors.details.message}</p>

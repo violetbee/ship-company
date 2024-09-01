@@ -1,20 +1,57 @@
+import React, { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
 import { getUserId } from "../services/userSlice";
-
 import { Button } from "../ui/Button";
 import { updateCV, updateProfile } from "../services/postAPI";
+import Quill from "quill";
+import "quill/dist/quill.snow.css";
 
 function ProfilePage() {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, setValue } = useForm();
   const userId = useSelector(getUserId);
-
   const queryClient = useQueryClient();
 
   const cachedProfile = queryClient.getQueryData(["profiles", userId]);
-
   const cachedCV = queryClient.getQueryData(["cv", cachedProfile?.id]);
+
+  const quillRef = useRef(null);
+
+  useEffect(() => {
+    if (quillRef.current) {
+      const toolbarOptions = [
+        [{ header: "1" }, { header: "2" }, { font: [] }],
+        [{ size: [] }],
+        ["bold", "italic", "underline", "strike", "blockquote"],
+        [
+          { list: "ordered" },
+          { list: "bullet" },
+          { indent: "-1" },
+          { indent: "+1" },
+        ],
+        ["link", "image", "video"],
+        ["clean"],
+      ];
+
+      const quill = new Quill(quillRef.current, {
+        theme: "snow",
+        modules: {
+          toolbar: toolbarOptions,
+        },
+      });
+
+      // Quill'de değer ayarla
+      if (cachedCV?.details) {
+        quill.clipboard.dangerouslyPasteHTML(cachedCV.details);
+      }
+
+      // Değer değişikliği olduğunda form kontrolüne ayarla
+      quill.on("text-change", () => {
+        setValue("cvDetails", quill.root.innerHTML);
+      });
+    }
+  }, [cachedCV, setValue]);
 
   const updateProfileMutation = useMutation({
     mutationFn: updateProfile,
@@ -58,7 +95,7 @@ function ProfilePage() {
   };
 
   return (
-    <div className=" flex flex-col bg-gradient-to-r from-blue-600 to-purple-600 px-4 pt-5">
+    <div className="flex flex-col bg-gradient-to-r from-blue-600 to-purple-600 px-4 pt-5">
       <main className="flex-grow p-8">
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -88,14 +125,14 @@ function ProfilePage() {
           </div>
           <div>
             <label className="block text-lg font-semibold text-gray-700 mb-2">
-              CV Detayları:
+              İş Deneyimleri:
             </label>
-            <textarea
-              {...register("cvDetails")}
-              defaultValue={cachedCV?.details || ""}
+            <div
+              ref={quillRef}
               className="w-full p-3 border border-gray-300 rounded-md"
-              rows="6"
+              style={{ minHeight: "200px" }}
             />
+            <textarea {...register("cvDetails")} className="hidden" />
           </div>
           <Button type="submit" variant="primary" className="w-full">
             Kaydet
