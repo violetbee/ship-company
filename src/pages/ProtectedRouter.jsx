@@ -14,3 +14,14 @@ function ProtectedRouter({ children }) {
 }
 
 export default ProtectedRouter;
+
+export const ProtectIlanEkle = ({ children }) => {
+  const user = useSelector((state) => state.user);
+
+  if (user.status !== "authenticated" || user.role !== "superUser") {
+    // Eğer kullanıcı yetkili değilse, giriş sayfasına yönlendir
+    return <Navigate to="/" />;
+  }
+
+  return children;
+};

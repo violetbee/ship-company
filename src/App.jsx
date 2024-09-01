@@ -14,6 +14,7 @@ import ProfilePage from "./pages/ProfilePage";
 import ProtectedRoute from "./pages/ProtectedRoute";
 import PrivateRoute from "./pages/PrivateRoute";
 import JobPage from "./pages/JobPage";
+import { ProtectIlanEkle } from "./pages/ProtectedRouter";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -39,7 +40,14 @@ function App() {
         <Routes>
           <Route element={<RootLayout />}>
             <Route index element={<Home />} />
-            <Route path="ilanolustur" element={<JobForm />} />
+            <Route
+              path="ilanolustur"
+              element={
+                <ProtectIlanEkle>
+                  <JobForm />
+                </ProtectIlanEkle>
+              }
+            />
             <Route path="ilanlar/:id" element={<DetailPage />} />
             <Route
               path="profile"
