@@ -47,3 +47,13 @@ function ProtectedRoute({ children }) {
 }
 
 export default ProtectedRoute;
+
+export function ProtectedCvDetails({ children }) {
+  const isSuperUser = useSelector((state) => state.user.role === "superUser");
+
+  if (!isSuperUser) {
+    return <Navigate to="/" />;
+  }
+
+  return children;
+}

@@ -10,7 +10,7 @@ import LoginForm from "./ui/LoginForm";
 import Signup from "./ui/Signup";
 
 import ProfilePage from "./pages/ProfilePage";
-import ProtectedRoute from "./pages/ProtectedRoute";
+import ProtectedRoute, { ProtectedCvDetails } from "./pages/ProtectedRoute";
 import PrivateRoute from "./pages/PrivateRoute";
 import JobPage from "./pages/JobPage";
 import { ProtectIlanEkle } from "./pages/ProtectedRouter";
@@ -77,7 +77,14 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="id/:id" element={<CVDetailsPage />} />
+        <Route
+          path="id/:id"
+          element={
+            <ProtectedCvDetails>
+              <CVDetailsPage />
+            </ProtectedCvDetails>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );
