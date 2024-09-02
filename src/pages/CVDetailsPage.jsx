@@ -1,10 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { getCVByCVProfileID } from "../services/getAPI";
 import "../customQuill.css";
 
 function CVDetailsPage() {
   const { id } = useParams();
+
+  const navigate = useNavigate();
+
+  // Fonksiyon: Bir önceki sayfaya dön
+  const handleGoBack = () => {
+    navigate(-1);
+  };
 
   const {
     data: CVData,

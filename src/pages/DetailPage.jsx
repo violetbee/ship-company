@@ -4,7 +4,7 @@ import Spinner from "../ui/Spinner";
 import { useSelector } from "react-redux";
 import { getUserId } from "../services/userSlice";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { checkApplicationExists } from "../services/getAPI";
+import { checkApplicationExists, getCV, getProfile } from "../services/getAPI";
 import { postApplication } from "../services/postAPI";
 import { cleanHtmlContent } from "../helper/quil";
 
@@ -16,19 +16,27 @@ function DetailPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const cachedProfile = queryClient.getQueryData(["profiles", userId]);
-  const cachedCV = queryClient.getQueryData(["cv", cachedProfile?.id]);
+  const { isLoading: profileLoading, data: profile } = useQuery({
+    queryKey: ["profiles", userId],
+    queryFn: () => getProfile(userId),
+    enabled: !!userId,
+  });
 
+  const { isLoading: cvLoading, data: cv } = useQuery({
+    queryKey: ["cv", profile?.id],
+    queryFn: () => getCV(userId),
+    enabled: !!userId,
+  });
   // Kullanıcının başvurusu olup olmadığını kontrol etme
   const { data: applicationExists, isLoading: isCheckingApplication } =
     useQuery({
-      queryKey: ["applicationExists", cachedProfile?.id, id],
-      queryFn: () => checkApplicationExists(cachedProfile?.id, id),
-      enabled: !!cachedProfile?.id && !!id,
+      queryKey: ["applicationExists", profile?.id, id],
+      queryFn: () => checkApplicationExists(profile?.id, id),
+      enabled: !!profile?.id && !!id,
     });
 
   const { mutate: postApp } = useMutation({
-    mutationFn: () => postApplication(cachedProfile.id, id),
+    mutationFn: () => postApplication(profile?.id, id),
     onSuccess: () => {
       alert("Başvuru başarıyla yapıldı!");
       queryClient.invalidateQueries(["applicationExists"]);
@@ -39,7 +47,7 @@ function DetailPage() {
   });
 
   function handlePost() {
-    if (!cachedCV) {
+    if (!cv) {
       alert("CV'niz bulunmuyor. Başvuru yapabilmek için CV'nizi yükleyin.");
       navigate("/cvekle");
       return;

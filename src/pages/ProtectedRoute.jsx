@@ -14,8 +14,6 @@ function ProtectedRoute({ children }) {
   const queryClient = useQueryClient();
   const cachedSession = queryClient.getQueryData(["session"]);
 
-  console.log("Cached Session:", cachedSession);
-
   const { isLoading: profileLoading, data: profile } = useQuery({
     queryKey: ["profiles", userId],
     queryFn: () => getProfile(userId),
