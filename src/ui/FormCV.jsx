@@ -1,3 +1,4 @@
+import React, { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "./Button";
 import { useSelector } from "react-redux";
@@ -5,10 +6,33 @@ import { getUserId } from "../services/userSlice";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createCV } from "../services/postAPI";
 import { useNavigate } from "react-router";
-import { useEffect, useRef } from "react";
 import Quill from "quill";
 import "quill/dist/quill.snow.css";
 
+const editorStyle = {
+  height: "400px", // Editör yüksekliği
+  minHeight: "300px", // Minimum yüksekliği
+  maxHeight: "600px", // Maksimum yüksekliği
+  border: "2px solid #000", // Kenarlık
+  borderRadius: "8px", // Köşe yuvarlama
+  borderColor: "#000", // Kenarlık rengi
+  borderWidth: "2px", // Kenarlık genişliği
+  borderStyle: "solid", // Kenarlık stili
+  fontSize: "16px", // Yazı tipi boyutu
+  color: "#333", // Yazı rengi
+  backgroundColor: "#f9f9f9", // Arka plan rengi
+  backgroundImage: "url('/path/to/image.jpg')", // Arka plan resmi
+  backgroundSize: "cover", // Arka plan resmi boyutu
+  backgroundRepeat: "no-repeat", // Arka plan resmi tekrarı
+  backgroundPosition: "center", // Arka plan resmi konumu
+  padding: "10px", // İç boşluk
+  margin: "20px", // Dış boşluk
+  overflowY: "auto", // Dikey kaydırma
+  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // Gölgeler
+  lineHeight: "1.5", // Satır yüksekliği
+  fontFamily: "Arial, sans-serif", // Yazı tipi
+  textAlign: "left", // Metin hizalaması
+};
 function CvForm() {
   const {
     register,
@@ -144,7 +168,8 @@ function CvForm() {
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Details
           </label>
-          <div ref={quillRef} className="quill-editor"></div>
+          <div ref={quillRef} style={editorStyle}></div>{" "}
+          {/* Inline stil uygulama */}
           {errors.details && (
             <p className="mt-2 text-sm text-red-600">
               {errors.details.message}

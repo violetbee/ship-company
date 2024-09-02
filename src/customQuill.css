@@ -1,0 +1,30 @@
+.custom-prose h2 {
+  font-size: 2rem; /* Başlık boyutu */
+  color: #333; /* Başlık rengi */
+  border-bottom: 2px solid #ddd; /* Başlık altı çizgi */
+  padding-bottom: 0.5rem; /* Başlık altı boşluk */
+  margin-bottom: 1rem; /* Başlık altı boşluk */
+}
+
+.custom-prose p {
+  font-size: 1.125rem; /* Paragraf yazı boyutu */
+  color: #555; /* Paragraf yazı rengi */
+  line-height: 1.6; /* Satır yüksekliği */
+  margin-bottom: 1rem; /* Paragraf altı boşluk */
+}
+
+.custom-prose ul {
+  list-style-type: disc; /* Liste işareti */
+  padding-left: 1.5rem; /* Liste içi boşluk */
+}
+
+.custom-prose li {
+  margin-bottom: 0.5rem; /* Liste öğesi altı boşluk */
+}
+
+.custom-prose blockquote {
+  border-left: 4px solid #eee; /* Alıntı sol kenar */
+  padding-left: 1rem; /* Alıntı içi boşluk */
+  color: #666; /* Alıntı metin rengi */
+  margin: 1rem 0; /* Alıntı üst ve alt boşluk */
+}
