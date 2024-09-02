@@ -134,3 +134,22 @@ export async function getCVByCVProfileID(profileID) {
 
   return cv;
 }
+
+export async function getApplicationsByJobId(id) {
+  try {
+    // İş ilanı ID'sine göre başvuruları almak için Supabase sorgusu
+    const { data, error } = await supabase
+      .from("applications") // 'applications' tablosunun adını kendi veritabanınıza göre ayarlayın
+      .select("*") // Gerekli olan sütunları seçin, '*' tüm sütunları alır
+      .eq("job_listing_id", id); // 'job_id' sütununu iş ilanı ID'sine eşitle
+
+    if (error) {
+      throw new Error(`Error fetching applications: ${error.message}`);
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error fetching applications:", error);
+    throw error;
+  }
+}

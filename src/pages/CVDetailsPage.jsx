@@ -5,7 +5,6 @@ import "../customQuill.css";
 
 function CVDetailsPage() {
   const { id } = useParams();
-
   const navigate = useNavigate();
 
   // Fonksiyon: Bir önceki sayfaya dön
@@ -38,9 +37,19 @@ function CVDetailsPage() {
       </h1>
 
       <div
-        className="custom-prose  lg:prose-xl mx-auto text-gray-700"
+        className="custom-prose lg:prose-xl mx-auto text-gray-700"
         dangerouslySetInnerHTML={{ __html: CVData.details }}
       />
+
+      {/* Geri Dönme Butonu */}
+      <div className="mt-8 text-center">
+        <button
+          onClick={handleGoBack}
+          className="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 transition"
+        >
+          Go Back
+        </button>
+      </div>
     </div>
   );
 }
