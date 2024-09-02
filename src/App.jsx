@@ -17,6 +17,7 @@ import { ProtectIlanEkle } from "./pages/ProtectedRouter";
 import Spinner from "./ui/Spinner";
 import { getSession } from "./services/getAPI";
 import CVDetailsPage from "./pages/CVDetailsPage";
+import JobListings from "./pages/FilteredJobListing";
 
 function App() {
   const { isLoading: loading } = useQuery({
@@ -68,6 +69,7 @@ function App() {
             }
           />
           <Route path="hizmetler" element={<JobPage />} />
+          <Route path="job-listings" element={<JobListings />} />
         </Route>
         <Route
           path="cvekle"
