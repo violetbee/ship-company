@@ -100,7 +100,7 @@ export async function getCV(userId) {
     .eq("profile_id", profile.id)
     .single();
 
-  if (error) return [];
+  if (error) return null;
 
   return data;
 }

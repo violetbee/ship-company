@@ -34,14 +34,14 @@ function ProtectedRoute({ children }) {
     return <Spinner />;
   }
 
-  // Initialize `hasCV` based on the presence and length of `cv`
-  const hasCV = cv && cv.length > 0;
+  // Check if cv object exists and has properties
+  const hasCV = cv && Object.keys(cv).length > 0;
 
   if (!isAuthenticated) {
     return <Navigate to="/login" />;
   }
 
-  if (hasCV && window.location.pathname !== "/cvekle") {
+  if (!hasCV && window.location.pathname !== "/cvekle") {
     return <Navigate to="/cvekle" />;
   }
 
