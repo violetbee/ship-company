@@ -12,6 +12,7 @@ import {
 } from "../services/getAPI";
 import { postApplication } from "../services/postAPI";
 import { cleanHtmlContent } from "../helper/quil";
+import "../customQuill.css";
 
 function DetailPage() {
   const { id } = useParams();
@@ -143,7 +144,7 @@ function DetailPage() {
 
         <div>
           <div
-            className="text-xl text-gray-800"
+            className="custom-prose lg:prose-xl mx-auto text-gray-700"
             dangerouslySetInnerHTML={{
               __html: cleanHtmlContent(jobData.details),
             }}
