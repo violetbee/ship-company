@@ -173,27 +173,30 @@ function DetailPage() {
             ) : (
               <div>
                 {applications?.length > 0 ? (
-                  applications.map((application) => (
-                    <div
-                      key={application.id}
-                      className="bg-gray-50 p-6 rounded-lg shadow-md mb-4"
-                    >
-                      <h3 className="text-lg font-semibold text-gray-800">
-                        Application ID: {application.id}
-                      </h3>
-                      <p className="text-gray-700">
-                        Applied By: {application.profile_id}
-                      </p>
-                      <button
-                        onClick={() =>
-                          navigate(`/id/${application.profile_id}`)
-                        }
-                        className="mt-2 px-4 py-2 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                  applications
+                    .slice()
+                    .reverse()
+                    .map((application) => (
+                      <div
+                        key={application.id}
+                        className="bg-gray-50 p-6 rounded-lg shadow-md mb-4"
                       >
-                        View CV
-                      </button>
-                    </div>
-                  ))
+                        <h3 className="text-lg font-semibold text-gray-800">
+                          Application ID: {application.id}
+                        </h3>
+                        <p className="text-gray-700">
+                          Applied By: {application.profile_id}
+                        </p>
+                        <button
+                          onClick={() =>
+                            navigate(`/id/${application.profile_id}`)
+                          }
+                          className="mt-2 px-4 py-2 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                        >
+                          View CV
+                        </button>
+                      </div>
+                    ))
                 ) : (
                   <p>No applications found.</p>
                 )}
