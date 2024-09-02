@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
@@ -7,6 +7,31 @@ import { Button } from "../ui/Button";
 import { updateCV, updateProfile } from "../services/postAPI";
 import Quill from "quill";
 import "quill/dist/quill.snow.css";
+
+const editorStyle = {
+  height: "400px", // Editör yüksekliği
+  minHeight: "300px", // Minimum yüksekliği
+  maxHeight: "600px", // Maksimum yüksekliği
+  border: "2px solid #000", // Kenarlık
+  borderRadius: "8px", // Köşe yuvarlama
+  borderColor: "#000", // Kenarlık rengi
+  borderWidth: "2px", // Kenarlık genişliği
+  borderStyle: "solid", // Kenarlık stili
+  fontSize: "16px", // Yazı tipi boyutu
+  color: "#333", // Yazı rengi
+  backgroundColor: "#f9f9f9", // Arka plan rengi
+  backgroundImage: "url('/path/to/image.jpg')", // Arka plan resmi
+  backgroundSize: "cover", // Arka plan resmi boyutu
+  backgroundRepeat: "no-repeat", // Arka plan resmi tekrarı
+  backgroundPosition: "center", // Arka plan resmi konumu
+  padding: "10px", // İç boşluk
+  margin: "20px", // Dış boşluk
+  overflowY: "auto", // Dikey kaydırma
+  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // Gölgeler
+  lineHeight: "1.5", // Satır yüksekliği
+  fontFamily: "Arial, sans-serif", // Yazı tipi
+  textAlign: "left", // Metin hizalaması
+};
 
 function ProfilePage() {
   const { register, handleSubmit, setValue } = useForm();
@@ -127,11 +152,7 @@ function ProfilePage() {
             <label className="block text-lg font-semibold text-gray-700 mb-2">
               İş Deneyimleri:
             </label>
-            <div
-              ref={quillRef}
-              className="w-full p-3 border border-gray-300 rounded-md"
-              style={{ minHeight: "200px" }}
-            />
+            <div ref={quillRef} style={editorStyle} />
             <textarea {...register("cvDetails")} className="hidden" />
           </div>
           <Button type="submit" variant="primary" className="w-full">

@@ -1,7 +1,9 @@
 import { Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getUserId } from "../services/userSlice";
+import { getCV, getProfile } from "../services/getAPI";
+import Spinner from "../ui/Spinner";
 
 function ProtectedRoute({ children }) {
   const isAuthenticated = useSelector(
@@ -10,22 +12,36 @@ function ProtectedRoute({ children }) {
   const userId = useSelector(getUserId);
 
   const queryClient = useQueryClient();
+  const cachedSession = queryClient.getQueryData(["session"]);
 
-  const cachedProfile = queryClient.getQueryData(["profiles", userId]);
+  console.log("Cached Session:", cachedSession);
 
-  const cachedCV = queryClient.getQueryData(["cv", cachedProfile?.id]);
+  const { isLoading: profileLoading, data: profile } = useQuery({
+    queryKey: ["profiles", userId],
+    queryFn: () => getProfile(userId),
+    enabled: !!userId && isAuthenticated,
+  });
 
-  let hasCV = false;
+  const { isLoading: cvLoading, data: cv } = useQuery({
+    queryKey: ["cv", profile?.id],
+    queryFn: () => getCV(userId),
+    enabled: !!userId && isAuthenticated,
+  });
 
-  if (cachedCV && cachedCV.length !== 0) {
-    hasCV = true;
+  console.log("CV:", cv);
+
+  if (profileLoading || cvLoading) {
+    return <Spinner />;
   }
+
+  // Initialize `hasCV` based on the presence and length of `cv`
+  const hasCV = cv && cv.length > 0;
 
   if (!isAuthenticated) {
     return <Navigate to="/login" />;
   }
 
-  if (!hasCV && window.location.pathname !== "/cvekle") {
+  if (hasCV && window.location.pathname !== "/cvekle") {
     return <Navigate to="/cvekle" />;
   }
 

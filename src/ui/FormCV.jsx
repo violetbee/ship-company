@@ -136,7 +136,7 @@ function CvForm() {
   });
 
   const onSubmit = async (data) => {
-    if (!cachedCV) {
+    if (cachedCV) {
       alert("You already have a CV. Please update your existing CV.");
       return;
     }
