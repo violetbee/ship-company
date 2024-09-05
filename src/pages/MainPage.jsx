@@ -3,15 +3,16 @@ import { CarouselDemo } from "../ui/app/_components/carousel";
 import bg from "../assets/giresun.jpeg";
 import { useJobListing } from "../hooks/useJobListing";
 import Spinner from "../ui/Spinner";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
 import { getUserId } from "../services/userSlice";
 import { getCV, getProfile } from "../services/getAPI";
+import { deleteJobPost } from "../services/postAPI";
 
 export default function Home() {
   const { isLoading, error, jobListingData } = useJobListing();
-
   const userId = useSelector(getUserId);
+  const isSuperUser = useSelector((state) => state.user.role === "superUser");
   const isAuthenticated = useSelector(
     (state) => state.user.status === "authenticated"
   );
@@ -27,6 +28,35 @@ export default function Home() {
     queryFn: () => getCV(userId),
     enabled: !!userId && isAuthenticated,
   });
+
+  const queryClient = useQueryClient();
+
+  const deleteMutation = useMutation({
+    mutationFn: (jobId) => deleteJobPost(jobId, userId),
+    onSuccess: (data) => {
+      // Eğer data boşsa, işlemin başarılı olmadığını varsayabiliriz
+      if (data.error) {
+        alert("İlanı silerken bir hata oluştu ilanin sahibi siz degilsiniz");
+      } else {
+        queryClient.invalidateQueries(["jobListings"]);
+        alert("İlan başarıyla silindi.");
+      }
+    },
+    onError: (error) => {
+      // Hata nesnesini doğrudan alırız
+      alert(
+        `İlanı silerken bir hata oluştu: ${error.message || "Bilinmeyen hata"}`
+      );
+    },
+  });
+
+  const handleDelete = (jobId) => {
+    if (isSuperUser) {
+      deleteMutation.mutate(jobId);
+    } else {
+      alert("Bu işlemi gerçekleştirme yetkiniz yok.");
+    }
+  };
 
   if (isLoading) {
     return <Spinner />;
@@ -71,7 +101,8 @@ export default function Home() {
             <p className="w-1/6">Gemi Tipi</p>
             <p className="w-1/6">Tonaj</p>
             <p className="w-1/6">Bayrak Türü</p>
-            <p className="w-1/6">Detay</p>
+            {isSuperUser && <p className="w-1/6">Sil</p>}{" "}
+            {/* Silme başlığı yalnızca superUser'lara gösterilir */}
           </div>
           {jobListingData
             .slice(-3)
@@ -92,6 +123,14 @@ export default function Home() {
                 >
                   Detay
                 </Link>
+                {isSuperUser && (
+                  <button
+                    onClick={() => handleDelete(jobPosting.id)}
+                    className="w-1/6 rounded-full bg-red-600 px-4 py-2 text-center text-white"
+                  >
+                    Sil
+                  </button>
+                )}
               </div>
             ))}
         </div>

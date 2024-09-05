@@ -42,6 +42,10 @@ function LoginForm() {
     loginMutation.mutate(data); // Login fonksiyonunu tetikle
   };
 
+  const handleSignupClick = () => {
+    navigate("/signup"); // Kayıt sayfasına yönlendir
+  };
+
   return (
     <div className="flex items-center justify-center bg-gray-100 px-4 py-12">
       <form
@@ -102,6 +106,19 @@ function LoginForm() {
         >
           Giriş Yap
         </button>
+
+        <div className="text-center mt-4">
+          <p className="text-gray-700">
+            Hesabınız yok mu?{" "}
+            <button
+              type="button"
+              onClick={handleSignupClick}
+              className="text-blue-500 hover:underline"
+            >
+              Kayıt Ol
+            </button>
+          </p>
+        </div>
       </form>
     </div>
   );

@@ -155,11 +155,41 @@ export async function createCV(cv) {
   return data;
 }
 
-export async function postApplication(userId, jobId) {
+export async function postApplication(userId, jobId, jobDataUserId) {
   const { data, error } = await supabase
     .from("applications")
-    .insert([{ profile_id: userId, job_listing_id: jobId }])
+    .insert([
+      {
+        profile_id: userId,
+        job_listing_id: jobId,
+        jobCreatedUserId: jobDataUserId,
+      },
+    ])
     .select();
 
   return data;
+}
+
+export async function deleteJobPost(id, profile_id) {
+  try {
+    const { data, error } = await supabase
+      .from("job_listings")
+      .delete()
+      .eq("id", id)
+      .eq("user_id", profile_id);
+
+    if (error) {
+      throw new Error(error.message); // Hata mesajını fırlatıyoruz
+    }
+
+    // Eğer veri boşsa, hata durumu kabul edilir
+    if (data.length === 0) {
+      throw new Error("İlan bulunamadı veya silinmedi.");
+    }
+
+    return { data };
+  } catch (err) {
+    console.error("Delete job post failed:", err.message); // Hata mesajını console'a yazıyoruz
+    return { error: err.message }; // Hata mesajını döndürüyoruz
+  }
 }

@@ -23,6 +23,7 @@ function App() {
   const { isLoading: loading } = useQuery({
     queryKey: ["session"],
     queryFn: getSession,
+    refetchOnWindowFocus: false,
   });
 
   if (loading) {

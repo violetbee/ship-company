@@ -17,6 +17,7 @@ import "../customQuill.css";
 function DetailPage() {
   const { id } = useParams();
   const userId = useSelector(getUserId);
+  console.log(userId);
 
   const isAuth = useSelector((state) => state.user.status === "authenticated");
   const isSuperUser = useSelector((state) => state.user.role === "superUser");
@@ -45,7 +46,7 @@ function DetailPage() {
     });
 
   const { mutate: postApp } = useMutation({
-    mutationFn: () => postApplication(profile?.id, id),
+    mutationFn: () => postApplication(profile?.id, id, jobData?.user_id),
     onSuccess: () => {
       alert("Başvuru başarıyla yapıldı!");
       queryClient.invalidateQueries(["applicationExists"]);
@@ -57,8 +58,8 @@ function DetailPage() {
 
   // Başvuruları almak için useQuery
   const { data: applications, isLoading: applicationsLoading } = useQuery({
-    queryKey: ["applications", id],
-    queryFn: () => getApplicationsByJobId(id),
+    queryKey: ["applications", userId],
+    queryFn: () => getApplicationsByJobId(id, userId),
     enabled: isSuperUser && !!id, // Sadece superUser rolü için
   });
 
@@ -75,6 +76,10 @@ function DetailPage() {
     }
 
     postApp();
+  }
+
+  function handleLoginRedirect() {
+    navigate("/login");
   }
 
   if (isLoading) {
@@ -151,13 +156,24 @@ function DetailPage() {
           />
         </div>
 
-        {isAuth && (
+        {isAuth ? (
+          <>
+            {isAuth && (
+              <button
+                onClick={handlePost}
+                className="mt-6 px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                disabled={isCheckingApplication}
+              >
+                {isCheckingApplication ? "Checking..." : "Apply Now"}
+              </button>
+            )}
+          </>
+        ) : (
           <button
-            onClick={handlePost}
-            className="mt-6 px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150"
-            disabled={isCheckingApplication}
+            onClick={handleLoginRedirect}
+            className="mt-6 px-6 py-3 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition ease-in-out duration-150"
           >
-            {isCheckingApplication ? "Checking..." : "Apply Now"}
+            Basvurmak İçin Giriş Yap
           </button>
         )}
 

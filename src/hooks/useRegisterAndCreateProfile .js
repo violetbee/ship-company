@@ -13,7 +13,7 @@ export function useRegisterAndCreateProfile() {
       return user;
     },
     onSuccess: () => {
-      navigate("/");
+      navigate("/login");
     },
     onError: (error) => {
       console.error("Hata:", error.message);
