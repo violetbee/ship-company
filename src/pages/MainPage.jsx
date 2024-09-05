@@ -108,30 +108,31 @@ export default function Home() {
             .slice(-3)
             .reverse()
             .map((jobPosting) => (
-              <div
+              <Link
+                className="hover:opacity-75"
                 key={jobPosting.id}
-                className="flex w-full items-center justify-between border-t border-[#171923] bg-white p-4 text-[#171923]"
+                to={`/ilanlar/${jobPosting.id}`}
               >
-                <p className="w-1/6">{jobPosting.date}</p>
-                <p className="w-1/6">{jobPosting.required_personnel}</p>
-                <p className="w-1/6">{jobPosting.ship_type}</p>
-                <p className="w-1/6">{jobPosting.tonnage}</p>
-                <p className="w-1/6">{jobPosting.flag_type}</p>
-                <Link
-                  className="w-1/6 rounded-full bg-[#171923] px-4 py-2 text-center text-white"
-                  to={`/ilanlar/${jobPosting.id}`}
+                <div
+                  key={jobPosting.id}
+                  className="flex w-full items-center justify-between border-t border-[#171923] bg-white p-4 text-[#171923] hover:text-blue-800"
                 >
-                  Detay
-                </Link>
-                {isSuperUser && (
-                  <button
-                    onClick={() => handleDelete(jobPosting.id)}
-                    className="w-1/6 rounded-full bg-red-600 px-4 py-2 text-center text-white"
-                  >
-                    Sil
-                  </button>
-                )}
-              </div>
+                  <p className="w-1/6">{jobPosting.date}</p>
+                  <p className="w-1/6">{jobPosting.required_personnel}</p>
+                  <p className="w-1/6">{jobPosting.ship_type}</p>
+                  <p className="w-1/6">{jobPosting.tonnage}</p>
+                  <p className="w-1/6">{jobPosting.flag_type}</p>
+
+                  {isSuperUser && (
+                    <button
+                      onClick={() => handleDelete(jobPosting.id)}
+                      className="w-1/6 rounded-full bg-red-600 px-4 py-2 text-center text-white"
+                    >
+                      Sil
+                    </button>
+                  )}
+                </div>
+              </Link>
             ))}
         </div>
       </div>
