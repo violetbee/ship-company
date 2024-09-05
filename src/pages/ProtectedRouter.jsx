@@ -18,8 +18,13 @@ export default ProtectedRouter;
 export const ProtectIlanEkle = ({ children }) => {
   const user = useSelector((state) => state.user);
 
-  if (user.status !== "authenticated" || user.role !== "superUser") {
-    // Eğer kullanıcı yetkili değilse, giriş sayfasına yönlendir
+  // Kullanıcının yetkili olup olmadığını kontrol et
+  const isAuthenticated = user.status === "authenticated";
+  const isSuperUser = user.role === "superUser";
+  const isSiteAdmin = user.role === "siteAdmin";
+
+  if (!isAuthenticated || (!isSuperUser && !isSiteAdmin)) {
+    // Eğer kullanıcı yetkili değilse veya uygun role sahip değilse, ana sayfaya yönlendir
     return <Navigate to="/" />;
   }
 

@@ -12,10 +12,12 @@ import { deleteJobPost } from "../services/postAPI";
 export default function Home() {
   const { isLoading, error, jobListingData } = useJobListing();
   const userId = useSelector(getUserId);
-  const isSuperUser = useSelector((state) => state.user.role === "superUser");
   const isAuthenticated = useSelector(
     (state) => state.user.status === "authenticated"
   );
+  const isSuperUser = useSelector((state) => state.user.role === "superUser");
+
+  const isSiteAdmin = useSelector((state) => state.user.role === "siteAdmin");
 
   const { data: profile } = useQuery({
     queryKey: ["profiles", userId],
@@ -97,11 +99,11 @@ export default function Home() {
         <div className="mt-4 w-full">
           <div className="flex w-full items-center justify-between bg-[#171923] p-4 text-white">
             <p className="w-1/6">Tarih</p>
-            <p className="w-1/6">Gereken Personel</p>
+            <p className="w-1/6">Yeterlilik</p>
             <p className="w-1/6">Gemi Tipi</p>
             <p className="w-1/6">Tonaj</p>
             <p className="w-1/6">Bayrak Türü</p>
-            {isSuperUser && <p className="w-1/6">Sil</p>}{" "}
+
             {/* Silme başlığı yalnızca superUser'lara gösterilir */}
           </div>
           {jobListingData
@@ -118,19 +120,10 @@ export default function Home() {
                   className="flex w-full items-center justify-between border-t border-[#171923] bg-white p-4 text-[#171923] hover:text-blue-800"
                 >
                   <p className="w-1/6">{jobPosting.date}</p>
-                  <p className="w-1/6">{jobPosting.required_personnel}</p>
+                  <p className="w-1/6">{jobPosting.yeterlilik}</p>
                   <p className="w-1/6">{jobPosting.ship_type}</p>
                   <p className="w-1/6">{jobPosting.tonnage}</p>
                   <p className="w-1/6">{jobPosting.flag_type}</p>
-
-                  {isSuperUser && (
-                    <button
-                      onClick={() => handleDelete(jobPosting.id)}
-                      className="w-1/6 rounded-full bg-red-600 px-4 py-2 text-center text-white"
-                    >
-                      Sil
-                    </button>
-                  )}
                 </div>
               </Link>
             ))}

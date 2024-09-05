@@ -26,8 +26,6 @@ function ProtectedRoute({ children }) {
     enabled: !!userId && isAuthenticated,
   });
 
-  console.log("CV:", cv);
-
   if (profileLoading || cvLoading) {
     return <Spinner />;
   }
@@ -49,9 +47,12 @@ function ProtectedRoute({ children }) {
 export default ProtectedRoute;
 
 export function ProtectedCvDetails({ children }) {
-  const isSuperUser = useSelector((state) => state.user.role === "superUser");
+  const userRole = useSelector((state) => state.user.role);
 
-  if (!isSuperUser) {
+  const isSuperUser = userRole === "superUser";
+  const isSiteAdmin = userRole === "siteAdmin";
+
+  if (!isSuperUser && !isSiteAdmin) {
     return <Navigate to="/" />;
   }
 

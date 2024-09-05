@@ -18,6 +18,14 @@ import Spinner from "./ui/Spinner";
 import { getSession } from "./services/getAPI";
 import CVDetailsPage from "./pages/CVDetailsPage";
 import JobListings from "./pages/FilteredJobListing";
+import CVHTMLTable from "./ui/CVHTMLTable";
+import { LanguageForm } from "./ui/LanguageForm";
+import { EducationForm } from "./ui/EducationForm";
+import { WorkExperienceForm } from "./ui/WorkExperienceForm";
+import { PageProfile } from "./ui/PageProfile";
+import AboutUs from "./pages/AboutUs";
+import ContactUs from "./pages/ContactUs";
+import KurumsalBasvuru from "./pages/KurumsalBasvuru";
 
 function App() {
   const { isLoading: loading } = useQuery({
@@ -35,6 +43,10 @@ function App() {
       <Routes>
         <Route element={<RootLayout />}>
           <Route index element={<Home />} />
+          <Route path="hakkimizda" element={<AboutUs />} />
+          <Route path="iletisim" element={<ContactUs />} />
+          <Route path="kurumsal" element={<KurumsalBasvuru />} />
+
           <Route
             path="ilanolustur"
             element={

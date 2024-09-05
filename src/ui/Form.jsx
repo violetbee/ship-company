@@ -9,6 +9,7 @@ import { useEffect, useRef } from "react";
 import Quill from "quill";
 import "quill/dist/quill.snow.css";
 import { useForm } from "react-hook-form";
+import { ReusuableInput } from "./FormsET";
 
 function JobForm() {
   const queryClient = useQueryClient();
@@ -100,6 +101,20 @@ function JobForm() {
               type="text"
               placeholder="İlan Başlığı"
               {...register("title", { required: "İlan Başlığı gerekli" })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 text-black"
+            />
+            {errors.title && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.title.message}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <Input
+              type="text"
+              placeholder="yeterlilik"
+              {...register("yeterlilik", { required: "Yeterlilik Gerekli" })}
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 text-black"
             />
             {errors.title && (

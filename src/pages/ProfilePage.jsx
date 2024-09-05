@@ -7,30 +7,32 @@ import { Button } from "../ui/Button";
 import { updateCV, updateProfile } from "../services/postAPI";
 import Quill from "quill";
 import "quill/dist/quill.snow.css";
+import { ReusuableInput } from "../ui/FormsET";
 
 const editorStyle = {
-  height: "400px", // Editör yüksekliği
-  minHeight: "300px", // Minimum yüksekliği
-  maxHeight: "600px", // Maksimum yüksekliği
-  border: "2px solid #000", // Kenarlık
-  borderRadius: "8px", // Köşe yuvarlama
-  borderColor: "#000", // Kenarlık rengi
-  borderWidth: "2px", // Kenarlık genişliği
-  borderStyle: "solid", // Kenarlık stili
-  fontSize: "16px", // Yazı tipi boyutu
-  color: "#333", // Yazı rengi
-  backgroundColor: "#f9f9f9", // Arka plan rengi
-  backgroundImage: "url('/path/to/image.jpg')", // Arka plan resmi
-  backgroundSize: "cover", // Arka plan resmi boyutu
-  backgroundRepeat: "no-repeat", // Arka plan resmi tekrarı
-  backgroundPosition: "center", // Arka plan resmi konumu
-  padding: "10px", // İç boşluk
-  margin: "20px", // Dış boşluk
-  overflowY: "auto", // Dikey kaydırma
-  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // Gölgeler
-  lineHeight: "1.5", // Satır yüksekliği
-  fontFamily: "Arial, sans-serif", // Yazı tipi
-  textAlign: "left", // Metin hizalaması
+  height: "600px",
+  minHeight: "400px",
+  maxHeight: "800px",
+  width: "100%",
+  border: "2px solid #000",
+  borderRadius: "8px",
+  borderColor: "#000",
+  borderWidth: "2px",
+  borderStyle: "solid",
+  fontSize: "16px",
+  color: "#333",
+  backgroundColor: "#f9f9f9",
+  backgroundImage: "url('/path/to/image.jpg')",
+  backgroundSize: "cover",
+  backgroundRepeat: "no-repeat",
+  backgroundPosition: "center",
+  padding: "10px",
+
+  overflowY: "auto",
+  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+  lineHeight: "3",
+  fontFamily: "Arial, sans-serif",
+  textAlign: "left",
 };
 
 function ProfilePage() {
@@ -112,6 +114,10 @@ function ProfilePage() {
         updateCVMutation.mutate({
           profileId: cachedProfile.id,
           cvDetails: data.cvDetails,
+          imageURL: cachedCV.imageURL,
+          image: data.imageURL[0],
+          phone_number: "555",
+          Address: "555",
         });
       }
     } else {
@@ -120,12 +126,25 @@ function ProfilePage() {
   };
 
   return (
-    <div className="flex flex-col bg-gradient-to-r from-blue-600 to-purple-600 px-4 pt-5">
+    <div className="flex flex-col  bg-gradient-to-r from-blue-600 to-purple-600 px-4 pt-5">
       <main className="flex-grow p-8">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="space-y-6 max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg"
+          className="space-y-6 w-full  mx-auto bg-white p-8 rounded-lg shadow-lg"
         >
+          {cachedCV.imageURL ? (
+            <div className="flex justify-center mb-8">
+              <img
+                src={cachedCV?.imageURL}
+                alt="Profile"
+                className="w-32 h-32 object-cover rounded-full border border-gray-300"
+              />
+            </div>
+          ) : (
+            "no image"
+          )}
+          <input type="file" accept="image/*" {...register("imageURL")} />
+
           <div>
             <label className="block text-lg font-semibold text-gray-700 mb-2">
               Ad:
@@ -146,6 +165,19 @@ function ProfilePage() {
               {...register("surname")}
               defaultValue={cachedProfile?.second_name || ""}
               className="w-full p-3 border border-gray-300 rounded-md"
+            />
+            <ReusuableInput
+              register={register}
+              name="phone_number"
+              defaultValue={cachedCV?.phone_number}
+              label="Telefon Numarasi | | Phone Number"
+            />
+
+            <ReusuableInput
+              register={register}
+              name="Address"
+              defaultValue={cachedCV?.Address}
+              label="Adres | | Address"
             />
           </div>
           <div>

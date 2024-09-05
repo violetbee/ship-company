@@ -10,6 +10,7 @@ const JobPage = () => {
   const { isLoading, error, jobListingData } = useJobListing();
   const userId = useSelector(getUserId);
   const isSuperUser = useSelector((state) => state.user.role === "superUser");
+  const isSiteAdmin = useSelector((state) => state.user.role === "siteAdmin");
 
   const queryClient = useQueryClient();
 
@@ -27,7 +28,7 @@ const JobPage = () => {
   });
 
   const handleDelete = (jobId) => {
-    if (isSuperUser) {
+    if (isSuperUser || isSiteAdmin) {
       deleteMutation.mutate(jobId);
     } else {
       alert("Bu işlemi gerçekleştirme yetkiniz yok.");
@@ -44,38 +45,36 @@ const JobPage = () => {
 
   return (
     <div className="w-full">
-      <div className="flex w-full items-center justify-between bg-[#171923] p-4 text-white">
-        <p className="w-1/6">Tarih</p>
-        <p className="w-1/6">Gereken Personel</p>
-        <p className="w-1/6">Gemi Tipi</p>
-        <p className="w-1/6">Tonaj</p>
-        <p className="w-1/6">Bayrak Türü</p>
-        <p className="w-1/6">Detay</p>
-        {isSuperUser && <p className="w-1/6">Sil</p>}
+      <div className="flex w-full items-center bg-[#171923] p-4 text-white">
+        <p className="w-1/5">Tarih</p>
+        <p className="w-1/5">Yeterlilik</p>
+        <p className="w-1/5">Gemi Tipi</p>
+        <p className="w-1/5">Tonaj</p>
+        <p className="w-1/5">Bayrak Türü</p>
+        {isSuperUser || isSiteAdmin ? <p className="w-auto">Sil</p> : null}
       </div>
       {jobListingData
         ?.slice()
         .reverse()
         .map((jobPosting) => (
           <div
-            key={jobPosting?.id}
-            className="flex w-full items-center justify-between border-t border-[#171923] bg-white p-4 text-[#171923]"
+            key={jobPosting.id}
+            className="flex items-center justify-between border-t border-[#171923] bg-white p-4 text-[#171923] hover:text-blue-800 hover:bg-gray-100"
           >
-            <p className="w-1/6">{jobPosting?.date}</p>
-            <p className="w-1/6">{jobPosting?.required_personnel}</p>
-            <p className="w-1/6">{jobPosting?.ship_type}</p>
-            <p className="w-1/6">{jobPosting?.tonnage}</p>
-            <p className="w-1/6">{jobPosting?.flag_type}</p>
             <Link
-              className="w-1/6 rounded-full bg-[#171923] px-4 py-2 text-center text-white"
-              to={`/ilanlar/${jobPosting?.id}`}
+              className="flex w-full items-center"
+              to={`/ilanlar/${jobPosting.id}`}
             >
-              Detay
+              <p className="w-1/5">{jobPosting.date}</p>
+              <p className="w-1/5">{jobPosting.yeterlilik}</p>
+              <p className="w-1/5">{jobPosting.ship_type}</p>
+              <p className="w-1/5">{jobPosting.tonnage}</p>
+              <p className="w-1/5">{jobPosting.flag_type}</p>
             </Link>
-            {isSuperUser && (
+            {(isSuperUser || isSiteAdmin) && (
               <button
-                onClick={() => handleDelete(jobPosting?.id)}
-                className="w-1/6 rounded-full bg-red-600 px-4 py-2 text-center text-white"
+                onClick={() => handleDelete(jobPosting.id)}
+                className="ml-4 rounded-full bg-red-600 px-4 py-2 text-white hover:bg-red-700"
               >
                 Sil
               </button>

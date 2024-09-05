@@ -21,6 +21,7 @@ function DetailPage() {
 
   const isAuth = useSelector((state) => state.user.status === "authenticated");
   const isSuperUser = useSelector((state) => state.user.role === "superUser");
+  const isSiteAdmin = useSelector((state) => state.user.role === "siteAdmin");
   const { jobData, isLoading, error } = useJobById(id);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -60,7 +61,7 @@ function DetailPage() {
   const { data: applications, isLoading: applicationsLoading } = useQuery({
     queryKey: ["applications", userId],
     queryFn: () => getApplicationsByJobId(id, userId),
-    enabled: isSuperUser && !!id, // Sadece superUser rolü için
+    enabled: (isSuperUser || isSiteAdmin) && !!id, // Sadece superUser rolü için
   });
 
   function handlePost() {
@@ -89,7 +90,7 @@ function DetailPage() {
   if (error) {
     return (
       <div className="flex items-center justify-center min-h-screen text-lg font-semibold text-red-500">
-        Error loading job details
+        İş ilanı detayları yüklenirken bir hata oluştu
       </div>
     );
   }
@@ -104,7 +105,7 @@ function DetailPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
           <div className="flex flex-col bg-gray-50 p-6 rounded-lg shadow-md">
             <h2 className="text-lg font-semibold text-gray-800 mb-2">
-              Created At
+              Oluşturulma Tarihi
             </h2>
             <p className="text-gray-700">
               {new Date(jobData.created_at).toLocaleDateString()}
@@ -113,35 +114,31 @@ function DetailPage() {
 
           <div className="flex flex-col bg-gray-50 p-6 rounded-lg shadow-md">
             <h2 className="text-lg font-semibold text-gray-800 mb-2">
-              Required Personnel
+              Gereken Personel
             </h2>
             <p className="text-gray-700">{jobData.required_personnel}</p>
           </div>
 
           <div className="flex flex-col bg-gray-50 p-6 rounded-lg shadow-md">
             <h2 className="text-lg font-semibold text-gray-800 mb-2">
-              Ship Type
+              Geminin Tipi
             </h2>
             <p className="text-gray-700">{jobData.ship_type}</p>
           </div>
 
           <div className="flex flex-col bg-gray-50 p-6 rounded-lg shadow-md">
-            <h2 className="text-lg font-semibold text-gray-800 mb-2">
-              Tonnage
-            </h2>
+            <h2 className="text-lg font-semibold text-gray-800 mb-2">Ölçü</h2>
             <p className="text-gray-700">{jobData.tonnage}</p>
           </div>
 
           <div className="flex flex-col bg-gray-50 p-6 rounded-lg shadow-md">
-            <h2 className="text-lg font-semibold text-gray-800 mb-2">
-              Location
-            </h2>
+            <h2 className="text-lg font-semibold text-gray-800 mb-2">Konum</h2>
             <p className="text-gray-700">{jobData.location}</p>
           </div>
 
           <div className="flex flex-col bg-gray-50 p-6 rounded-lg shadow-md">
             <h2 className="text-lg font-semibold text-gray-800 mb-2">
-              Flag Type
+              Bayrak Türü
             </h2>
             <p className="text-gray-700">{jobData.flag_type}</p>
           </div>
@@ -164,7 +161,7 @@ function DetailPage() {
                 className="mt-6 px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150"
                 disabled={isCheckingApplication}
               >
-                {isCheckingApplication ? "Checking..." : "Apply Now"}
+                {isCheckingApplication ? "Kontrol Ediliyor..." : "Başvur"}
               </button>
             )}
           </>
@@ -173,15 +170,15 @@ function DetailPage() {
             onClick={handleLoginRedirect}
             className="mt-6 px-6 py-3 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition ease-in-out duration-150"
           >
-            Basvurmak İçin Giriş Yap
+            Başvurmak İçin Giriş Yap
           </button>
         )}
 
         {/* Super User bölümü */}
-        {isSuperUser && (
+        {(isSuperUser || isSiteAdmin) && (
           <div className="mt-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              Applications
+              Başvurular
             </h2>
 
             {applicationsLoading ? (
@@ -198,10 +195,10 @@ function DetailPage() {
                         className="bg-gray-50 p-6 rounded-lg shadow-md mb-4"
                       >
                         <h3 className="text-lg font-semibold text-gray-800">
-                          Application ID: {application.id}
+                          Başvuru ID: {application.id}
                         </h3>
                         <p className="text-gray-700">
-                          Applied By: {application.profile_id}
+                          Başvuru Yapan: {application.profile_id}
                         </p>
                         <button
                           onClick={() =>
@@ -209,12 +206,12 @@ function DetailPage() {
                           }
                           className="mt-2 px-4 py-2 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition ease-in-out duration-150"
                         >
-                          View CV
+                          CV'yi Görüntüle
                         </button>
                       </div>
                     ))
                 ) : (
-                  <p>No applications found.</p>
+                  <p>Başvuru bulunamadı.</p>
                 )}
               </div>
             )}

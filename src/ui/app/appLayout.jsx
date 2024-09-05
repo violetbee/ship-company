@@ -1,4 +1,5 @@
 import "../../../src/index.css";
+import Footer from "./_components/Footer";
 import Header from "./_components/header";
 import { Outlet } from "react-router";
 
@@ -9,6 +10,7 @@ function RootLayout() {
       <main>
         <Outlet />
       </main>
+      <Footer />
     </div>
   );
 }

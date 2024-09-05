@@ -9,6 +9,8 @@ function Header() {
   const { pathname } = useLocation();
   const auth = useSelector((state) => state.user.status);
   const isAuth = auth === "authenticated";
+  // userSlice.js veya benzeri dosya
+  const isSiteAdmin = useSelector((state) => state.user.role === "siteAdmin");
 
   const userRole = useSelector((state) => state.user.role);
   const isSuperUser = userRole === "superUser";
@@ -44,6 +46,18 @@ function Header() {
           >
             Hakkımızda
           </NavLink>
+          {!(isSuperUser || isSiteAdmin) && (
+            <NavLink
+              to="/kurumsal"
+              className={({ isActive }) =>
+                `hover:border-white flex h-full items-center justify-center border-b-4 border-transparent px-4 duration-200 ${
+                  isActive ? "border-white" : ""
+                }`
+              }
+            >
+              Kurumsal Basvuru
+            </NavLink>
+          )}
           <NavLink
             className={({ isActive }) =>
               `hover:border-white flex h-full items-center justify-center border-b-4 border-transparent px-4 duration-200 ${
@@ -64,7 +78,7 @@ function Header() {
           >
             İletişim
           </NavLink>
-          {isSuperUser && (
+          {(isSuperUser || isSiteAdmin) && (
             <NavLink
               className={({ isActive }) =>
                 `hover:border-white flex h-full items-center justify-center border-b-4 border-transparent px-4 duration-200 ${
