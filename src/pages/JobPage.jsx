@@ -53,34 +53,36 @@ const JobPage = () => {
         <p className="w-1/5">Bayrak Türü</p>
         {isSuperUser || isSiteAdmin ? <p className="w-auto">Sil</p> : null}
       </div>
-      {jobListingData
-        ?.slice()
-        .reverse()
-        .map((jobPosting) => (
-          <div
-            key={jobPosting.id}
-            className="flex items-center justify-between border-t border-[#171923] bg-white p-4 text-[#171923] hover:text-blue-800 hover:bg-gray-100"
-          >
-            <Link
-              className="flex w-full items-center"
-              to={`/ilanlar/${jobPosting.id}`}
+      <div className="min-h-dvh overflow-scroll">
+        {jobListingData
+          ?.slice()
+          .reverse()
+          .map((jobPosting) => (
+            <div
+              key={jobPosting.id}
+              className="flex items-center justify-between border-t border-[#171923] bg-white p-4 text-[#171923] hover:text-blue-800 hover:bg-gray-100"
             >
-              <p className="w-1/5">{jobPosting.date}</p>
-              <p className="w-1/5">{jobPosting.yeterlilik}</p>
-              <p className="w-1/5">{jobPosting.ship_type}</p>
-              <p className="w-1/5">{jobPosting.tonnage}</p>
-              <p className="w-1/5">{jobPosting.flag_type}</p>
-            </Link>
-            {(isSuperUser || isSiteAdmin) && (
-              <button
-                onClick={() => handleDelete(jobPosting.id)}
-                className="ml-4 rounded-full bg-red-600 px-4 py-2 text-white hover:bg-red-700"
+              <Link
+                className="flex w-full items-center"
+                to={`/ilanlar/${jobPosting.id}`}
               >
-                Sil
-              </button>
-            )}
-          </div>
-        ))}
+                <p className="w-1/5">{jobPosting.date}</p>
+                <p className="w-1/5">{jobPosting.yeterlilik}</p>
+                <p className="w-1/5">{jobPosting.ship_type}</p>
+                <p className="w-1/5">{jobPosting.tonnage}</p>
+                <p className="w-1/5">{jobPosting.flag_type}</p>
+              </Link>
+              {(isSuperUser || isSiteAdmin) && (
+                <button
+                  onClick={() => handleDelete(jobPosting.id)}
+                  className="ml-4 rounded-full bg-red-600 px-4 py-2 text-white hover:bg-red-700"
+                >
+                  Sil
+                </button>
+              )}
+            </div>
+          ))}
+      </div>
     </div>
   );
 };

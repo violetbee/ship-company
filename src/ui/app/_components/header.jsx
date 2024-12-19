@@ -64,7 +64,7 @@ function Header() {
                 isActive ? "border-white" : ""
               }`
             }
-            to="/hizmetler"
+            to="/job"
           >
             İş İlanları
           </NavLink>
@@ -125,10 +125,12 @@ function Header() {
         </div>
       </div>
       <div className="h-[2px] w-full bg-[#1d202c]" />
-      {pathname !== "/ilanolustur" &&
-        pathname !== "/profile" &&
-        pathname !== "/signup" &&
-        pathname !== "/login" && <SubHeader />}
+      <div className="max-sm:hidden">
+        {pathname !== "/ilanolustur" &&
+          pathname !== "/profile" &&
+          pathname !== "/signup" &&
+          pathname !== "/login" && <SubHeader />}
+      </div>
     </header>
   );
 }

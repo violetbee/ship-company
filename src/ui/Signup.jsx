@@ -51,7 +51,7 @@ const Signup = () => {
   };
 
   return (
-    <div className="flex items-center justify-center py-12 bg-gray-100">
+    <div className="flex items-center justify-center min-h-dvh py-12 bg-gray-100">
       <div className="w-full max-w-md p-8 bg-white shadow-md rounded-lg">
         <h2 className="text-2xl font-bold mb-6 text-center">Kayıt Formu</h2>
         <form onSubmit={handleSubmit(onSubmit)} noValidate>

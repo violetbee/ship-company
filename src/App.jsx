@@ -18,11 +18,7 @@ import Spinner from "./ui/Spinner";
 import { getSession } from "./services/getAPI";
 import CVDetailsPage from "./pages/CVDetailsPage";
 import JobListings from "./pages/FilteredJobListing";
-import CVHTMLTable from "./ui/CVHTMLTable";
-import { LanguageForm } from "./ui/LanguageForm";
-import { EducationForm } from "./ui/EducationForm";
-import { WorkExperienceForm } from "./ui/WorkExperienceForm";
-import { PageProfile } from "./ui/PageProfile";
+
 import AboutUs from "./pages/AboutUs";
 import ContactUs from "./pages/ContactUs";
 import KurumsalBasvuru from "./pages/KurumsalBasvuru";
@@ -81,7 +77,7 @@ function App() {
               </PrivateRoute>
             }
           />
-          <Route path="hizmetler" element={<JobPage />} />
+          <Route path="job" element={<JobPage />} />
           <Route path="job-listings" element={<JobListings />} />
         </Route>
         <Route
